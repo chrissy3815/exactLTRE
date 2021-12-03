@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Christina", "Hernandez", , "cmh352@cornell.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7188-8217"))
-Description: This package includes functions for the standard LTRE methods and an exact version of LTRE.
+Description: This package includes functions for the standard (approximate) LTRE methods and an exact version of LTRE.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
