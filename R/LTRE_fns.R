@@ -1,7 +1,7 @@
 ## Main LTRE functions
 
 
-# a wrapper function for standard LTRE:
+# a wrapper function for approximate LTRE:
 #' Approximate LTRE analysis
 #'
 #' @param Aobj An object containing all the population projection matrices to be
@@ -27,13 +27,13 @@
 #'  decomposes the difference in lambda due to differences at each position of
 #'  the matrices. For a fixed design LTRE, exactly 2 matrices must be provided,
 #'  ordered as `[reference matrix, test matrix`]. The matrix of contributions
-#'  returned from a standard method fixed design LTRE will have the same shape
+#'  returned from a approximate method fixed design LTRE will have the same shape
 #'  as the provided matrices.
 #'
 #'  A random design LTRE decomposes the variance in lambda due to variance and
 #'  covariance in the entries at each position in the matrices. For a random
 #'  design LTRE, at least 2 matrices must be provided. The matrix of
-#'  contributions returned from a standard method random design LTRE will
+#'  contributions returned from a approximate method random design LTRE will
 #'  include both first-order terms (due to variance) and interaction terms (due
 #'  to covariance). Therefore, if the provided matrix is 3x3, the matrix of
 #'  contributions will be 9x9 (the size of the variance-covariance matrix is the
@@ -42,16 +42,17 @@
 #'  of covariances are symmetric. So the contribution of covariance between two
 #'  vital rate parameters is the sum of the two corresponding off-diagonal terms.
 #'
-#'  The standard methods of LTRE analysis are based on approximation methods.
-#'  The equations and descriptions can be found in Caswell's 2001 textbook.
+#'  The equations and descriptions for the approximate methods of LTRE analysis
+#'  can be found in Caswell's 2001 textbook.
 #'
 #' @examples
 #' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
 #' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
 #' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
-#' cont_diff<- standardLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
-#' cont_var<- standardLTRE(list(A1,A2,A3), method='random') # contributions to the variance of lambda
-standardLTRE<- function(Aobj, method="random"){
+#' cont_diff<- approximateLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
+#' # contributions to the variance of lambda
+#' cont_var<- approximateLTRE(list(A1,A2,A3), method='random')
+approximateLTRE<- function(Aobj, method="random"){
 
   # if Aobj is passed in as a list, collapse into the row-format:
   if (is.list(Aobj)){
@@ -59,12 +60,12 @@ standardLTRE<- function(Aobj, method="random"){
   }
 
   if (method=="random"){
-    output<- standardLTRE_random(Aobj)
+    output<- approximateLTRE_random(Aobj)
   } else if (method=="fixed"){
     # For fixed LTRE, it is important that Aobj is 2 rows. Row 1 contains vec(Aref), and Row 2 contains vec(Atest)
     Aref<- reMat(Aobj,1)
     Atest<- reMat(Aobj,2)
-    output<- standardLTRE_fixed(Aref, Atest)
+    output<- approximateLTRE_fixed(Aref, Atest)
   }
   return(output)
 }
@@ -165,7 +166,7 @@ exactLTRE<- function(Aobj, method="random", maxint="all"){
 #'  decomposes the difference in lambda due to differences at each position of
 #'  the matrices. For a fixed design LTRE, exactly 2 matrices must be provided,
 #'  ordered as `[reference matrix, test matrix`]. The matrix of contributions
-#'  returned from a standard method fixed design LTRE will have the same shape
+#'  returned from an approximate method fixed design LTRE will have the same shape
 #'  as the provided matrices.
 #'
 #'  In some cases, it may not be obvious how to identify the reference and the
@@ -175,14 +176,14 @@ exactLTRE<- function(Aobj, method="random", maxint="all"){
 #'  you, as a user, input these matrices, it is important to understand how to
 #'  interpret positive and negative contributions.
 #'
-#'  The standard methods of LTRE analysis are based on approximation methods.
-#'  The equations and descriptions can be found in Caswell's 2001 textbook.
+#'  The equations and descriptions for the approximate methods of LTRE analysis
+#'  can be found in Caswell's 2001 textbook.
 #'
 #' @examples
 #' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
 #' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
-#' cont_diff<- standardLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
-standardLTRE_fixed<- function(Aref, Atest){
+#' cont_diff<- approximateLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
+approximateLTRE_fixed<- function(Aref, Atest){
 
   # run some matrix checks and return warnings as needed:
   run_matrix_checks(rbind(as.vector(Aref), as.vector(Atest)))
@@ -214,7 +215,7 @@ standardLTRE_fixed<- function(Aref, Atest){
 #'  A random design LTRE decomposes the variance in lambda due to variance and
 #'  covariance in the entries at each position in the matrices. For a random
 #'  design LTRE, at least 2 matrices must be provided. The matrix of
-#'  contributions returned from a standard method random design LTRE will
+#'  contributions returned from an approximate method random design LTRE will
 #'  include both first-order terms (due to variance) and interaction terms (due
 #'  to covariance). Therefore, if the provided matrix is 3x3, the matrix of
 #'  contributions will be 9x9 (the size of the variance-covariance matrix is the
@@ -223,15 +224,16 @@ standardLTRE_fixed<- function(Aref, Atest){
 #'  of covariances are symmetric. So the contribution of covariance between two
 #'  vital rate parameters is the sum of the two corresponding off-diagonal terms.
 #'
-#'  The standard methods of LTRE analysis are based on approximation methods.
-#'  The equations and descriptions can be found in Caswell's 2001 textbook.
+#'  The equations and descriptions for the approximate methods of LTRE analysis
+#'  can be found in Caswell's 2001 textbook.
 #'
 #' @examples
 #' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
 #' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
 #' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
-#' cont_var<- standardLTRE(list(A1,A2,A3), method='random') # contributions to the variance of lambda
-standardLTRE_random<- function(Aobj){
+#' # contributions to the variance of lambda
+#' cont_var<- approximateLTRE(list(A1,A2,A3), method='random')
+approximateLTRE_random<- function(Aobj){
   # each row of Aobj should be the elements of an individual population matrix, collapsed column-wise
   # if Aobj is passed in as a list, collapse into the row-format:
   if (is.list(Aobj)){
