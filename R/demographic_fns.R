@@ -1,5 +1,27 @@
 ## Demographic functions -------------------------------------------------------
 
+#' Generation time
+#'
+#' @param Amat The full population projection matrix
+#' @param Fmat The fertility elements of the population projection matrix.
+#'
+#' @return The generation time, as a single number, given in the same units as
+#' the projection time step. If the projection interval is two weeks, the
+#' generation time will be the number of two-week intervals. You may wish to
+#' convert to a standard time step, like days or years.
+#' @export
+#'
+#' @details This calculation comes from Bienvenu and Legendre (2015, The
+#' American Naturalist; [doi](https://doi.org/10.1086/681104)). They define the
+#' generation time as the average time between two events in the genealogy of
+#' the population.
+#'
+#' @examples
+#' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' F1<- matrix(0, nrow=3, ncol=3)
+#' F1[1,3]<- A1[1,3]
+#' #F1 is all zeros, except the upper right corner which matches A1 for adult fertility
+#' T<- generation_time(A1, F1)
 generation_time<- function(Amat, Fmat){
   # This uses the Bienvenu and Legendre (Am Nat 2015) definition of generation time.
   # T = lambda*v*w/(v*F*w)
@@ -11,6 +33,26 @@ generation_time<- function(Amat, Fmat){
   gentime<- lambda*v%*%w/(v%*%Fmat%*%w)
 }
 
+#' R0, the net reproductive output
+#'
+#' @param Amat The full population projection matrix
+#' @param Fmat The fertility elements of the population projection matrix.
+#'
+#' @return The net reproductive output, a single value, is the number of
+#' offspring that an individual is expected to have over their lifespan.
+#' @export
+#'
+#' @details The net reproductive output is the largest eigenvalue of the matrix
+#' product of the fertility matrix and the fundamental matrix. The fundamental
+#' matrix, generally referred to as __N__, contains the expected number of timesteps
+#' that an individual will spend in each age, stage, or size class of the matrix.
+#'
+#' @examples
+#' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' F1<- matrix(0, nrow=3, ncol=3)
+#' F1[1,3]<- A1[1,3]
+#' #F1 is all zeros, except the upper right corner which matches A1 for adult fertility
+#' R0<- r_nought(A1, F1)
 r_nought<- function(Amat, Fmat){
   Umat<- Amat-Fmat
   Nmat<- fundamental_matrix(Umat)
@@ -18,6 +60,40 @@ r_nought<- function(Amat, Fmat){
   return(R0)
 }
 
+#' Expected lifespan
+#'
+#' @param Umat The survival components of the population projection matrix
+#' @param all_ages User specifies whether the function should return the
+#' expected lifespan remaining for all ages (all_ages="T") or only the
+#' expected lifespan at birth (all_ages="F").
+#'
+#' @return The expected lifespan is either a vector (if all_ages="T") or a
+#'   single number for the expected lifespan of a newly born individual (if
+#'   all_ages="F"). Expected lifespan is given in the same units as the
+#'   projection time step. If the projection interval is two weeks, the lifespan
+#'   will be the number of two-week intervals that an individual is expected to
+#'   survive. You may wish to convert to a standard time step, like days or
+#'   years.
+#' @export
+#'
+#' @details The expected lifespan vector is calculated by multiplying a column
+#'   of ones by the fundamental matrix. The fundamental matrix, generally
+#'   referred to as __N__, contains the expected number of timesteps that an
+#'   individual will spend in each age, stage, or size class of the matrix.
+#'
+#'   The expected lifespan vector contains the expected lifespan remaining for
+#'   an individual in each age, stage, or size class of the population. If the
+#'   user requests only the expected lifespan from birth, then only the first
+#'   entry of the expected lifespan vector is returned.
+#'
+#' @examples
+#' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' U1<- A1
+#' U1[1,3]<- 0
+#' # the upper right corner represents adult fertility in this model. U1, the
+#' # survival matrix, contains all the transitions *except* for fertility.
+#' eta<- lifespan(U1, all_ages=TRUE)
+#' eta_1<- lifespan(U1, all_ages=FALSE) # eta_1 should match the first entry of eta
 lifespan<- function(Umat, all_ages=T){
   # expected lifespan (in timesteps of the model, not years!) is t(e)*Nmat
   # if all.ages=T, then return the vector of expected lifespan remaining
@@ -31,7 +107,22 @@ lifespan<- function(Umat, all_ages=T){
   return(eta)
 }
 
-# Calculate the mean matrix from a list of matrices:
+
+#' Calculate the mean matrix from a list of matrices
+#'
+#' @param Aobj A list of matrix population models, which must all have the same
+#' dimensions.
+#'
+#' @return A single population projection matrix, with the same dimensions as
+#' the provided ones, where all vital rate entries are the mean across all
+#' provided matrices at the respective matrix index.
+#' @export
+#'
+#' @examples
+#' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+#' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
+#' Amean<- mean_matrix(list(A1,A2,A3))
 mean_matrix<- function(Aobj){
   # Aobj is a list of matrices. We want to calculate the mean of all indices:
 
