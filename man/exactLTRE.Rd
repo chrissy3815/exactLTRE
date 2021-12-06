@@ -48,7 +48,13 @@ values, and then calculating the variance in lambda in this manipulated set
 of matrices.
 }
 \description{
-Exact LTRE analysis
+Life Table Response Experiments (LTREs) are a method of comparative demographic
+analysis. The purpose is to quantify how the difference or variance in vital
+rates (stage-specific survival, growth, and fertility) amongst populations
+contributes to difference or variance in the population growth rate, "lambda."
+The exact method of LTRE is based on the principles of functional ANOVA.
+The equations and descriptions for the exact method will be published in a
+forthcoming paper, which we will link to.
 }
 \details{
 Lambda is the asymptotic population growth rate, defined as the

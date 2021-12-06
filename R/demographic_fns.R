@@ -62,6 +62,17 @@ r_nought<- function(Amat, Fmat){
 
 #' Expected lifespan
 #'
+#' The expected lifespan vector is calculated by multiplying a column
+#' of ones by the fundamental matrix. The fundamental matrix, generally
+#'   referred to as __N__, contains the expected number of timesteps that an
+#'   individual will spend in each age, stage, or size class of the matrix, given
+#'   their current state.
+#'
+#'   The expected lifespan vector contains the expected lifespan remaining for
+#'   an individual in each age, stage, or size class of the population. If the
+#'   user requests only the expected lifespan from birth, then only the first
+#'   entry of the expected lifespan vector is returned.
+#'
 #' @param Umat The survival components of the population projection matrix
 #' @param all_ages User specifies whether the function should return the
 #' expected lifespan remaining for all ages (all_ages="T") or only the
@@ -75,16 +86,6 @@ r_nought<- function(Amat, Fmat){
 #'   survive. You may wish to convert to a standard time step, like days or
 #'   years.
 #' @export
-#'
-#' @details The expected lifespan vector is calculated by multiplying a column
-#'   of ones by the fundamental matrix. The fundamental matrix, generally
-#'   referred to as __N__, contains the expected number of timesteps that an
-#'   individual will spend in each age, stage, or size class of the matrix.
-#'
-#'   The expected lifespan vector contains the expected lifespan remaining for
-#'   an individual in each age, stage, or size class of the population. If the
-#'   user requests only the expected lifespan from birth, then only the first
-#'   entry of the expected lifespan vector is returned.
 #'
 #' @examples
 #' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
@@ -108,7 +109,11 @@ lifespan<- function(Umat, all_ages=T){
 }
 
 
-#' Calculate the mean matrix from a list of matrices
+#' Calculate the mean matrix
+#'
+#' Calculate the mean matrix from a list of matrices. In the mean matrix, each
+#' element of the matrix is the mean value at that indexed position, across all
+#' the provided matrices.
 #'
 #' @param Aobj A list of matrix population models, which must all have the same
 #' dimensions.
@@ -132,13 +137,20 @@ mean_matrix<- function(Aobj){
   return(meanmat)
 }
 
-#' Calculate the fundamental matrix
+#' Fundamental matrix
+#'
+#' Calculate the fundamental matrix. The fundamental matrix, generally referred
+#' to as \strong{N}, contains the expected number of timesteps that an individual
+#' will spend in each age, stage, or size class of the matrix throughout their
+#' lifespan, given their current class. In the fundamental matrix, the current
+#' state is the column, and the future states are in the rows. For an
+#' age-classified matrix, this should be lower triangular.
 #'
 #' @param Umat The survival components of the population projection matrix.
 #'
-#' @return The fundamental matrix, generally referred to as __N__, contains the
-#' expected number of timesteps that an individual will spend in each age,
-#' stage, or size class of the matrix throughout their lifespan.
+#' @return The fundamental matrix, containing the expected number of timesteps
+#' that an individual will spend in each class of the population, given their
+#' current state. This matrix will have the same size as the input matrix.
 #' @export
 #'
 #' @examples

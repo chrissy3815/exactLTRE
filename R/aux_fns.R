@@ -1,11 +1,51 @@
 ## Auxiliary functions ---------------------------------------------------------
-# A function for variance assuming a complete sample:
+
+
+#' A function for variance assuming a complete sample
+#'
+#' The variance, assuming a complete sample, is the mean of the squared
+#' deviations. When you assume an incomplete sample (the standard assumption in
+#' statistics), the variance is calculated as the sum of squared deviations,
+#' divided by (N-1), where N is the number of observations in the sample. As
+#' such, the output of \code{variance_complete} will always be smaller than the
+#' output of \code{var}.
+#'
+#' @param x A numeric vector that represents a complete sample.
+#'
+#' @return The variance of the entries of x, calculated with the assumption that
+#' x represents a complete sample. Compare to the output of
+#' \code{\link[stats]{var}}.
+#' @export
+#'
+#' @seealso \code{\link[stats]{var}}
+#'
+#' @examples
+#' test<- c(5, 6, 8, 10, 25)
+#' Vc<- variance_complete(test)
+#' # compare this output with that of var()
 variance_complete <- function(x) {
   xx<- x[!is.na(x)]
   mean((xx - mean(xx))^2)
 }
 
-# a function for the covariance object:
+#' The variance-covariance matrix for a set of population projection matrices
+#'
+#' Calculate the variance-covariance matrix for the vital rates of a series of
+#' population projection matrices.
+#'
+#' @param Aobj A list of matrix population models, which must all have the same
+#' dimensions.
+#'
+#' @return The variance-covariance matrix for the vital rates of the population
+#' projection matrices. If the dimensions of each matrix in \code{Aobj} are n-by-n,
+#' then the variance-covariance matrix will have dimensions n^2-by-n^2.
+#' @export
+#'
+#' @examples
+#' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+#' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
+#' covmat<- cov_matrix(list(A1,A2,A3))
 cov_matrix<- function(Aobj){
   # covariance matrix is: C = Expected[vec(A)*t(vec(A))] - vec(Amean)*t(vec(Amean))
   Amean<- apply(Aobj, 2, mean) # calculate the mean matrix

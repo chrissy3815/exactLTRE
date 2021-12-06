@@ -4,6 +4,13 @@
 # a wrapper function for approximate LTRE:
 #' Approximate LTRE analysis
 #'
+#' Life Table Response Experiments (LTREs) are a method of comparative demographic
+#' analysis. The purpose is to quantify how the difference or variance in vital
+#' rates (stage-specific survival, growth, and fertility) amongst populations
+#' contributes to difference or variance in the population growth rate, "lambda."
+#' The equations and descriptions for the approximate methods of LTRE analysis
+#' can be found in Caswell's 2001 textbook.
+#'
 #' @param Aobj An object containing all the population projection matrices to be
 #'  included in the analysis. It should either be a list, or a matrix where each
 #'   row is the column-wise vectorization of a matrix.
@@ -72,6 +79,14 @@ approximateLTRE<- function(Aobj, method="random"){
 
 # A wrapper function for exact LTRE:
 #' Exact LTRE analysis
+#'
+#' Life Table Response Experiments (LTREs) are a method of comparative demographic
+#' analysis. The purpose is to quantify how the difference or variance in vital
+#' rates (stage-specific survival, growth, and fertility) amongst populations
+#' contributes to difference or variance in the population growth rate, "lambda."
+#' The exact method of LTRE is based on the principles of functional ANOVA.
+#' The equations and descriptions for the exact method will be published in a
+#' forthcoming paper, which we will link to.
 #'
 #' @param Aobj An object containing all the population projection matrices to be
 #'  included in the analysis. It should either be a list, or a matrix where each
@@ -149,6 +164,13 @@ exactLTRE<- function(Aobj, method="random", maxint="all"){
 
 #' Approximate LTRE analysis: fixed design
 #'
+#  Life Table Response Experiments (LTREs) are a method of comparative demographic
+#' analysis. The purpose is to quantify how the difference or variance in vital
+#' rates (stage-specific survival, growth, and fertility) amongst populations
+#' contributes to difference or variance in the population growth rate, "lambda."
+#' The equations and descriptions for the approximate methods of LTRE analysis
+#' can be found in Caswell's 2001 textbook.
+#'
 #' @param Aref The population projection matrix of the reference population.
 #' Depending on the experimental or observational dataset, this may be the
 #' control treatment, the first time period, or the unharvested population, etc.
@@ -198,6 +220,13 @@ approximateLTRE_fixed<- function(Aref, Atest){
 }
 
 #' Approximate LTRE analysis: random design
+#'
+#' Life Table Response Experiments (LTREs) are a method of comparative demographic
+#' analysis. The purpose is to quantify how the difference or variance in vital
+#' rates (stage-specific survival, growth, and fertility) amongst populations
+#' contributes to difference or variance in the population growth rate, "lambda."
+#' The equations and descriptions for the approximate methods of LTRE analysis
+#' can be found in Caswell's 2001 textbook.
 #'
 #' @param Aobj An object containing all the population projection matrices to be
 #'  included in the analysis. It should either be a list, or a matrix where each
@@ -262,6 +291,14 @@ approximateLTRE_random<- function(Aobj){
 
 
 #' Exact LTRE analysis: random design
+#'
+#' Life Table Response Experiments (LTREs) are a method of comparative demographic
+#' analysis. The purpose is to quantify how the difference or variance in vital
+#' rates (stage-specific survival, growth, and fertility) amongst populations
+#' contributes to difference or variance in the population growth rate, "lambda."
+#' The exact method of LTRE is based on the principles of functional ANOVA.
+#' The equations and descriptions for the exact method will be published in a
+#' forthcoming paper, which we will link to.
 #'
 #' @param Aobj An object containing all the population projection matrices to be
 #' included in the analysis. It should either be a list, or a matrix where each
@@ -348,6 +385,14 @@ exactLTRE_random<- function(Aobj, maxint="all"){
 }
 
 #' Exact LTRE analysis: fixed design
+#'
+#' Life Table Response Experiments (LTREs) are a method of comparative demographic
+#' analysis. The purpose is to quantify how the difference or variance in vital
+#' rates (stage-specific survival, growth, and fertility) amongst populations
+#' contributes to difference or variance in the population growth rate, "lambda."
+#' The exact method of LTRE is based on the principles of functional ANOVA.
+#' The equations and descriptions for the exact method will be published in a
+#' forthcoming paper, which we will link to.
 #'
 #' @param Aobj An object containing all the population projection matrices to be
 #'  included in the analysis. It should either be a list, or a matrix where each

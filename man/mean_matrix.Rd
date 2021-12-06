@@ -2,7 +2,7 @@
 % Please edit documentation in R/demographic_fns.R
 \name{mean_matrix}
 \alias{mean_matrix}
-\title{Calculate the mean matrix from a list of matrices}
+\title{Calculate the mean matrix}
 \usage{
 mean_matrix(Aobj)
 }
@@ -16,7 +16,9 @@ the provided ones, where all vital rate entries are the mean across all
 provided matrices at the respective matrix index.
 }
 \description{
-Calculate the mean matrix from a list of matrices
+Calculate the mean matrix from a list of matrices. In the mean matrix, each
+element of the matrix is the mean value at that indexed position, across all
+the provided matrices.
 }
 \examples{
 A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)

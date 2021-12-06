@@ -19,7 +19,11 @@ asymptotic population growth rate, defined as the largest eigenvalue of the
 population projection matrix.
 }
 \description{
-Approximate LTRE analysis: fixed design
+analysis. The purpose is to quantify how the difference or variance in vital
+rates (stage-specific survival, growth, and fertility) amongst populations
+contributes to difference or variance in the population growth rate, "lambda."
+The equations and descriptions for the approximate methods of LTRE analysis
+can be found in Caswell's 2001 textbook.
 }
 \details{
 Lambda is the asymptotic population growth rate, defined as the
