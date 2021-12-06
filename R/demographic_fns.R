@@ -131,3 +131,27 @@ mean_matrix<- function(Aobj){
   meanmat<- reMat(meanmat_flat)
   return(meanmat)
 }
+
+#' Calculate the fundamental matrix
+#'
+#' @param Umat The survival components of the population projection matrix.
+#'
+#' @return The fundamental matrix, generally referred to as __N__, contains the
+#' expected number of timesteps that an individual will spend in each age,
+#' stage, or size class of the matrix throughout their lifespan.
+#' @export
+#'
+#' @examples
+#' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' U1<- A1
+#' U1[1,3]<- 0
+#' # the upper right corner represents adult fertility in this model. U1, the
+#' # survival matrix, contains all the transitions *except* for fertility.
+#' N1<- fundamental_matrix(U1)
+fundamental_matrix<- function(Umat){
+  # Umat contains all the transitions for individuals (so Amat-Fmat)
+
+  # the fundamental matrix, Nmat, is inv(I-U))
+  Nmat<- matrixcalc::matrix.inverse(diag(dim(Umat)[1])-Umat)
+  return(Nmat)
+}

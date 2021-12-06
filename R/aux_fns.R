@@ -1,12 +1,12 @@
 ## Auxiliary functions ---------------------------------------------------------
 # A function for variance assuming a complete sample:
-Vc <- function(x) {
+variance_complete <- function(x) {
   xx<- x[!is.na(x)]
   mean((xx - mean(xx))^2)
 }
 
 # a function for the covariance object:
-mycov<- function(Aobj){
+cov_matrix<- function(Aobj){
   # covariance matrix is: C = Expected[vec(A)*t(vec(A))] - vec(Amean)*t(vec(Amean))
   Amean<- apply(Aobj, 2, mean) # calculate the mean matrix
   second_term<- Amean%*%t(Amean)
@@ -79,7 +79,7 @@ lamVar<- function(Aobj, which.fixed=NULL) {
     lambdas[j]<- Re(eigen(Mj, only.values = T)$values[1])
   }
   # calculate the variance in lambda
-  return(Vc(lambdas))
+  return(variance_complete(lambdas))
 }
 
 # A function to compute the difference in lambda across a set of matrices, with some parameters fixed at their mean value:
@@ -131,39 +131,6 @@ make.Gmatrix<-function(n) {
     botMat<- cbind(-G, G)
     G<- rbind(topMat, botMat)}
   return(G)
-}
-
-# function for generating "my" Gmatrix from list_ind_vary:
-my.Gmatrix<- function(list_ind_vary){
-  matdim<- length(list_ind_vary)
-  Gmatrix<- diag(nrow=matdim, ncol=matdim) # start with a diagonal matrix
-
-  for (i in 2:matdim){# go row-wise, starting with row 2
-    ind_i<- list_ind_vary[[i]] # which indices were varying for this row?
-    order_i<- length(list_ind_vary[[i]]) # what order interaction is represented by row i?
-
-    for (j in 1:(i-1)){# we only want to check the sub-diagonal entries
-
-      if (j==1){
-        # the first column is the multiplicative factor for the baseline/constant term
-        # (note, this is not relevant for LTRE because nu_0=eps_0=0 ALWAYS in LTRE)
-        Gmatrix[i,j]<- (-1)^(order_i)
-        next
-      }
-      # which indices were varying for the entry of nu corresponding to this column?
-      ind_j<- list_ind_vary[[j]]
-      order_j<- length(list_ind_vary[[j]])
-
-      if (sum(ind_j %in% ind_i)==length(ind_j)){ # this is the row-entries that will be non-zero
-        if (order_i%%2 == order_j%%2){
-          Gmatrix[i,j]<- 1
-        } else {
-          Gmatrix[i,j]<- (-1)
-        }
-      }
-    }
-  }
-  return(Gmatrix)
 }
 
 # A lower-level function for calculating the responses of a matrix, according to some other function:
@@ -297,13 +264,4 @@ run_matrix_checks<- function(Aobj){
               call.=FALSE)
     }
   }
-}
-
-# Calculate the fundamental matrix
-fundamental_matrix<- function(Umat){
-  # Umat contains all the transitions for individuals (so Amat-Fmat)
-
-  # the fundamental matrix, Nmat, is inv(I-U))
-  Nmat<- matrixcalc::matrix.inverse(diag(dim(Umat)[1])-Umat)
-  return(Nmat)
 }

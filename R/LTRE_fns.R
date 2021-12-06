@@ -244,7 +244,7 @@ approximateLTRE_random<- function(Aobj){
   run_matrix_checks(Aobj)
 
   # covariance matrix for the parameters in Aobj:
-  Cmat<- mycov(Aobj)
+  Cmat<- cov_matrix(Aobj)
 
   # calculate the mean parameter values and reshape into a square matrix:
   Amean<- matrix(apply(Aobj,2,mean),sqrt(dim(Aobj)[2]),sqrt(dim(Aobj)[2]))
@@ -320,7 +320,7 @@ exactLTRE_random<- function(Aobj, maxint="all"){
 
   #find the indices of the columns in Aobj that have non-zero variance. In other
   # words, which matrix entries vary among populations?
-  ind_vary<- which(apply(Aobj, MARGIN=2, FUN=Vc)>0)
+  ind_vary<- which(apply(Aobj, MARGIN=2, FUN=variance_complete)>0)
 
   # calculate the responses, the vector nu: aka the variance in lambda,
   # given each possible combination of parameters varying or held at their mean:
