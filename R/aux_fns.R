@@ -33,22 +33,30 @@ variance_complete <- function(x) {
 #' Calculate the variance-covariance matrix for the vital rates of a series of
 #' population projection matrices.
 #'
-#' @param Aobj A list of matrix population models, which must all have the same
-#' dimensions.
+#' @param Aobj A matrix where each row is the column-wise vectorization of a
+#' population projection matrix.
 #'
 #' @return The variance-covariance matrix for the vital rates of the population
 #' projection matrices. If the dimensions of each matrix in \code{Aobj} are n-by-n,
 #' then the variance-covariance matrix will have dimensions n^2-by-n^2.
 #' @export
 #'
+#' @details The diagonal entries of the variance-covariance matrix give the
+#' variance of the entries in each index of the matrix. The off-diagonal entries
+#' of the variance-covariance matrix give the covariance of entries in each index
+#' of the matrix. The variance-covariance matrix is symmetrical, and the
+#' covariance of a given pair of vital rates is the sum of the two corresponding
+#' indices.
+#'
 #' @examples
 #' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
 #' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
 #' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
-#' covmat<- cov_matrix(list(A1,A2,A3))
+#' A_all<- collapse_mat_list(list(A1, A2, A3))
+#' covmat<- cov_matrix(A_all)
 cov_matrix<- function(Aobj){
   # covariance matrix is: C = Expected[vec(A)*t(vec(A))] - vec(Amean)*t(vec(Amean))
-  Amean<- apply(Aobj, 2, mean) # calculate the mean matrix
+  Amean<- apply(Aobj, 2, mean) # calculate the mean matrix (in vector form)
   second_term<- Amean%*%t(Amean)
   first_term_elements<- list() # initialize the holder for the part inside square brackets
   for (i in 1:dim(Aobj)[1]){
@@ -61,6 +69,28 @@ cov_matrix<- function(Aobj){
 }
 
 # A function to reconstruct a matrix that was collapsed column-wise into a row vector:
+#' Reconstruct a matrix that was collapsed into a row vector
+#'
+#' Reconstruct a matrix that was collapsed into a row vector. This function
+#' assumes that the matrix is square (as population projection matrices are).
+#' This function also assumes that the matrix was originally collapsed column-wise.
+#'
+#' @param vecM Either a single row containing a vector-ized matrix, or a matrix
+#' where each row is a column-wise vector-ized matrix.
+#' @param j Row-index of the target matrix to re-construct, if \code{vecM} is a
+#' matrix. If \code{vecM} is a single row vector, then this input can be
+#' neglected.
+#'
+#' @return A single square matrix
+#' @export
+#'
+#' @examples
+#' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+#' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
+#' A1_remat<- reMat(as.vector(A1))
+#' A_all<- rbind(as.vector(A1), as.vector(A2), as.vector(A3))
+#' A3_remat<- reMat(A_all, j=3)
 reMat<- function(vecM,j=NULL){
   # vecM is a matrix where each row is vec(Aj), and j is the row index to be re-constructed
 
@@ -81,6 +111,22 @@ reMat<- function(vecM,j=NULL){
 }
 
 # A function to collapse a list of matrices into rows:
+#' Collapse a list of matrices
+#'
+#' Collapse a list of square matrices into a matrix where each row contains the
+#' column-wise vectorization of one of the original matrices.
+#'
+#' @param Alist A list of matrices, of any length.
+#'
+#' @return A matrix where each row contains the column-wise vectorization of one
+#' of the original matrices.
+#' @export
+#'
+#' @examples
+#' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+#' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
+#' A_all<- collapse_mat_list(list(A1, A2, A3))
 collapse_mat_list<- function(Alist){
   # check what size the Aobj matrix needs to be:
   matdim<- dim(Alist[[1]])[1]
@@ -94,6 +140,34 @@ collapse_mat_list<- function(Alist){
 }
 
 # A function to compute the variance in lambda across a set of matrices, with some parameters fixed at their mean value:
+#' Variance in lambda
+#'
+#' In population projection matrices, the eigenvalue with the largest magnitude
+#' is the asymptotic population growth rate, referred to as lambda. This function
+#' calculates the variance in lambda among a group of population projection
+#' matrices, which must all be the same size. This function also has the option
+#' to hold some of the vital rates at their mean values across all the provided
+#' matrices. The resulting calculation is the variance of lambda with all the
+#' non-fixed vital rates are varying. For example, if all the vital rates are
+#' held fixed except for adult fertility, then the output is the variance in
+#' lambda due to variance in adult fertility.
+#'
+#' @param Aobj An object containing all the population projection matrices to be
+#'  included in the analysis. It should either be a list, or a matrix where each
+#'  row is the column-wise vectorization of a matrix.
+#' @param which.fixed The column-wise indices (single-value index) of the vital
+#' rates to be held at their mean values across all matrices in \code{Aobj}.
+#'
+#' @return A single value of variance.
+#' @export
+#'
+#' @examples
+#' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+#' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
+#' A_all<- collapse_mat_list(list(A1, A2, A3))
+#' var_all_vary<- lamVar(A_all)
+#' var_fert_vary<- lamVar(A_all, which.fixed=c(2,6,9))
 lamVar<- function(Aobj, which.fixed=NULL) {
 
   if (is.list(Aobj)){
@@ -123,6 +197,50 @@ lamVar<- function(Aobj, which.fixed=NULL) {
 }
 
 # A function to compute the difference in lambda across a set of matrices, with some parameters fixed at their mean value:
+#' Difference in lambda
+#'
+#' In population projection matrices, the eigenvalue with the largest magnitude
+#' is the asymptotic population growth rate, referred to as lambda. This function
+#' calculates the difference in lambda between two population projection
+#' matrices, which must have the same dimensions. This function also has the option
+#' to hold some of the vital rates at the value in the reference
+#' matrix. The resulting calculation is the difference in lambda when all the
+#' non-fixed vital rates are varying. For example, if all the vital rates are
+#' held fixed except for adult fertility, then the output is the difference in
+#' lambda due to difference in adult fertility. The difference is taken as
+#' \eqn{reference matrix - test matrix}, and the function assumes that the
+#' provided matrices are ordered \[reference, test\].
+#'
+#' This function differs from \code{lamDiff_meanBaseline} because it uses the reference
+#' matrix as the baseline. So fixed parameters are set to the values in the
+#' reference matrix. In \code{lamDiff_meanBaseline}, the fixed parameters would be set
+#' to their mean values.
+#'
+#' \code{lamDiff} is most appropriate for comparisons between a control and treatment
+#' population in a controlled experiment. \code{lamDiff_meanBaseline} is more
+#' appropriate for comparisons where it is not entirely obvious which population
+#' should be the reference and which should be the test (for example, when
+#' comparing a wet and a dry year).
+#'
+#' @param Aobj An object containing the population projection matrices to be
+#'  included in the analysis. It should either be a list, or a matrix where each
+#'  row is the column-wise vectorization of a matrix. Exactly 2 matrices should be
+#'  provided. If more than 2 matrices are provided, the function will assume
+#'  that the first is the reference and the second is the test matrix.
+#' @param which.fixed The column-wise indices (single-value index) of the vital
+#' rates to be held at their mean values across the matrices in \code{Aobj}.
+#'
+#' @return A single value for the difference in lambda.
+#' @export
+#'
+#' @seealso \code{\link{lamDiff_meanBaseline}} \code{\link{lamVar}}
+#'
+#' @examples
+#' Aref<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' Atest<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+#' A_all<- list(Aref,Atest)
+#' diff_all_vary<- lamDiff(A_all)
+#' diff_fert_vary<- lamDiff(A_all, which.fixed=c(2,6,9))
 lamDiff<- function(Aobj, which.fixed=NULL) {
   # Aobj can either be a list of matrices, where Aobj[[1]] is Aref and Aobj[[2]] is Atest
   # or have 2 rows that are the vec(Aref) and vec(Atest)
@@ -134,7 +252,8 @@ lamDiff<- function(Aobj, which.fixed=NULL) {
     else if (length(Aobj)<2){
       stop("Aobj contains fewer than 2 matrices, so we cannot compute the difference in lambda.")
     }
-    Mtest<- rbind(as.vector(Aobj[[1]]), as.vector(Aobj[[2]])) # convert to the vec'ed format
+    Aobj<- rbind(as.vector(Aobj[[1]]), as.vector(Aobj[[2]])) # convert to the vec'ed format
+    Mtest<- Aobj # make a copy so that we can do which.fixed and then calculate lambda's
   } else { # if Aobj isn't a list, then we assume it's a matrix.
     if (dim(Aobj)[1]>2){
       warning("Aobj contains more than 2 matrices. lamDiff assumes Aobj[1,] is vec(Aref) and Aobj[,2] is vec(Atest).")
@@ -163,7 +282,114 @@ lamDiff<- function(Aobj, which.fixed=NULL) {
   return(lambdas[2]-lambdas[1])
 }
 
+#' Difference in lambda, with a mean baseline
+#'
+#' In population projection matrices, the eigenvalue with the largest magnitude
+#' is the asymptotic population growth rate, referred to as lambda. This function
+#' calculates the difference in lambda between two population projection
+#' matrices, which must have the same dimensions. This function also has the option
+#' to hold some of the vital rates at their mean values across the provided
+#' matrices. The resulting calculation is the difference in lambda when all the
+#' non-fixed vital rates are varying. For example, if all the vital rates are
+#' held fixed except for adult fertility, then the output is the difference in
+#' lambda due to difference in adult fertility. The difference is taken as
+#' \eqn{reference matrix - test matrix}, and the function assumes that the
+#' provided matrices are ordered \[reference, test\].
+#'
+#' This function differs from \code{lamDiff} because it uses the mean
+#' matrix as the baseline. So fixed parameters are set to their mean values. In
+#' \code{lamDiff}, the fixed parameters would be set to their respective values
+#' given by the reference matrix.
+#'
+#' \code{lamDiff} is most appropriate for comparisons between a control and treatment
+#' population in a controlled experiment. \code{lamDiff_meanBaseline} is more
+#' appropriate for comparisons where it is not entirely obvious which population
+#' should be the reference and which should be the test (for example, when
+#' comparing a wet and a dry year).
+#'
+#' @param Aobj An object containing the population projection matrices to be
+#'  included in the analysis. It should either be a list, or a matrix where each
+#'  row is the column-wise vectorization of a matrix. Exactly 2 matrices should be
+#'  provided. If more than 2 matrices are provided, the function will assume
+#'  that the first is the reference and the second is the test matrix.
+#' @param which.fixed The column-wise indices (single-value index) of the vital
+#' rates to be held at their mean values across the matrices in \code{Aobj}.
+#'
+#' @return A single value for the difference in lambda.
+#' @export
+#'
+#' @seealso \code{\link{lamDiff}} \code{\link{lamVar}}
+#'
+#' @examples
+#' Aref<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' Atest<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+#' A_all<- list(Aref,Atest)
+#' diff_all_vary<- lamDiff_meanBaseline(A_all)
+#' diff_fert_vary<- lamDiff_meanBaseline(A_all, which.fixed=c(2,6,9))
+lamDiff_meanBaseline<- function(Aobj, which.fixed=NULL) {
+  # Aobj can either be a list of matrices, where Aobj[[1]] is Aref and Aobj[[2]] is Atest
+  # or have 2 rows that are the vec(Aref) and vec(Atest)
+
+  if (is.list(Aobj)){
+    if (length(Aobj)>2){
+      warning("Aobj contains more than 2 matrices. lamDiff assumes Aobj[[1]] is Aref and Aobj[[2]] is Atest.")
+    }
+    else if (length(Aobj)<2){
+      stop("Aobj contains fewer than 2 matrices, so we cannot compute the difference in lambda.")
+    }
+    Mtest<- rbind(as.vector(Aobj[[1]]), as.vector(Aobj[[2]])) # convert to the vec'ed format
+    # calculate the mean matrix
+    Amean<- mean_matrix(Aobj)
+  } else { # if Aobj isn't a list, then we assume it's a matrix.
+    if (dim(Aobj)[1]>2){
+      warning("Aobj contains more than 2 matrices. lamDiff assumes Aobj[1,] is vec(Aref) and Aobj[,2] is vec(Atest).")
+    } else if (dim(Aobj)[1]<2){
+      stop("Aobj contains fewer than 2 matrices, so we cannot compute the difference in lambda.")
+    }
+    Mtest<- Aobj[1:2,]
+    Amean<- apply(Mtest, 2, FUN=mean)
+  }
+
+  # for each of the parameters to be held fixed, set it equal to the corresponding
+  # value in the mean matrix
+  if (length(which.fixed)>0){
+    for(j in which.fixed) {
+      Mtest[2,j]<- Amean[j]
+      Mtest[1,j]<- Amean[j]
+    }
+  }
+
+  lambdas<- numeric(nrow(Mtest)) # initialize lambdas
+  # calculate the lambda of each population matrix (with the fixed parameters
+  # held constant at their means)
+  for(j in 1:nrow(Mtest)) {
+    Mj<- reMat(Mtest,j)
+    lambdas[j]<- Re(eigen(Mj, only.values = T)$values[1])
+  }
+  # calculate the difference in lambda as Atest-Aref:
+  return(lambdas[2]-lambdas[1])
+}
+
 # recursive function for making a Gmatrix (from Poelwijk, Krishna, Ranganathan 2016 paper):
+#' G-matrix
+#'
+#' The G-matrix is the operator used for calculating a vector of effects from a
+#' vector of responses, up to arbitrary interaction order. This recursive function
+#' for building up the G-matrix is presented in a paper about genetic epistasis
+#' from Poelwijk, Krishna, and Ranganathan (2016, PLOS Comp Bio
+#' [doi](https://doi.org/10.1371/journal.pcbi.1004771)). When the G-matrix is
+#' multiplied on the right by a column vector of the observed responses, it will
+#' produce a column vector of the effects. In other words, the G-matrix adds and
+#' subtracts off the appropriate lower-order terms to arrive at the correct values
+#' of interaction effects.
+#'
+#' @param n The number of observed parameters, mutation sites, etc.
+#'
+#' @return A matrix that is x-by-x.
+#' @export
+#'
+#' @examples
+#' Gmat<- make.Gmatrix(3)
 make.Gmatrix<-function(n) {
   G<- 1;
   for(k in 1:n) {

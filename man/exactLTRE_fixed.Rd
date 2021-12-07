@@ -4,7 +4,7 @@
 \alias{exactLTRE_fixed}
 \title{Exact LTRE analysis: fixed design}
 \usage{
-exactLTRE_fixed(Aobj, maxint = "all")
+exactLTRE_fixed(Aobj, maxint = "all", mean_baseline = TRUE)
 }
 \arguments{
 \item{Aobj}{An object containing all the population projection matrices to be
@@ -15,6 +15,11 @@ row is the column-wise vectorization of a matrix. For fixed design, exactly
 \item{maxint}{The maximum interaction order to be evaluated. The default input
 is "all" but this input can take any integer value. If maxint=3, then the
 output will include contributions terms up to 3-way interactions.}
+
+\item{mean_baseline}{A true/false switch that allows the user to specify whether
+the mean matrix should be treated as the baseline, or the reference matrix.
+The default behavior is to use the mean matrix. See details for more guidance
+on this.}
 }
 \value{
 This returns a list object, with 3 items: (1) a vector of the matrix
@@ -54,6 +59,15 @@ largest eigenvalue of the population projection matrix. A fixed design LTRE
 decomposes the difference in lambda due to differences at each position of
 the matrices. For a fixed design LTRE, exactly 2 matrices must be provided,
 ordered as \verb{[reference matrix, test matrix}].
+
+\code{mean_baseline=TRUE} is most appropriate for comparisons where it is
+not entirely obvious which population should be the reference and which
+should be the test (for example, when comparing a wet and a dry year).
+\code{mean_baseline=FALSE} is most appropriate for comparisons between a
+control and treatment population in a controlled experiment.  We
+set \code{mean_baseline=TRUE} as the default behavior because most population
+projection models are built with field-collected data rather than controlled
+experiment data.
 }
 \examples{
 A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
@@ -61,4 +75,7 @@ A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
 A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
 cont_diff<- exactLTRE_fixed(list(A1,A2), maxint="all") # contributions to the difference in lambda
 cont_diff<- exactLTRE_fixed(list(A1,A2), maxint=2) # only first- and second-order terms
+
+# if A1 represents a control and A2 is a treatment:
+cont_diff<- exactLTRE_fixed(list(A1,A2), maxint="all", mean_baseline=FALSE)
 }

@@ -2,6 +2,11 @@
 
 #' Generation time
 #'
+#' Generation time has been defined in multiple ways. This calculation comes
+#' from Bienvenu and Legendre (2015, The American Naturalist;
+#' [doi](https://doi.org/10.1086/681104)). They define the generation time as
+#' the average time between two events in the genealogy of the population.
+#'
 #' @param Amat The full population projection matrix
 #' @param Fmat The fertility elements of the population projection matrix.
 #'
@@ -10,11 +15,6 @@
 #' generation time will be the number of two-week intervals. You may wish to
 #' convert to a standard time step, like days or years.
 #' @export
-#'
-#' @details This calculation comes from Bienvenu and Legendre (2015, The
-#' American Naturalist; [doi](https://doi.org/10.1086/681104)). They define the
-#' generation time as the average time between two events in the genealogy of
-#' the population.
 #'
 #' @examples
 #' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
@@ -35,17 +35,19 @@ generation_time<- function(Amat, Fmat){
 
 #' R0, the net reproductive output
 #'
+#' The net reproductive output, R_0, is the expected number of offspring for one
+#' individual across their expected lifespan. It is calculated as the largest
+#' eigenvalue of the matrix product of the fertility matrix and the fundamental
+#' matrix. The fundamental matrix, generally referred to as __N__, contains the
+#' expected number of timesteps that an individual will spend in each age,
+#' stage, or size class of the matrix.
+#'
 #' @param Amat The full population projection matrix
 #' @param Fmat The fertility elements of the population projection matrix.
 #'
 #' @return The net reproductive output, a single value, is the number of
 #' offspring that an individual is expected to have over their lifespan.
 #' @export
-#'
-#' @details The net reproductive output is the largest eigenvalue of the matrix
-#' product of the fertility matrix and the fundamental matrix. The fundamental
-#' matrix, generally referred to as __N__, contains the expected number of timesteps
-#' that an individual will spend in each age, stage, or size class of the matrix.
 #'
 #' @examples
 #' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
@@ -64,14 +66,9 @@ r_nought<- function(Amat, Fmat){
 #'
 #' The expected lifespan vector is calculated by multiplying a column
 #' of ones by the fundamental matrix. The fundamental matrix, generally
-#'   referred to as __N__, contains the expected number of timesteps that an
-#'   individual will spend in each age, stage, or size class of the matrix, given
-#'   their current state.
-#'
-#'   The expected lifespan vector contains the expected lifespan remaining for
-#'   an individual in each age, stage, or size class of the population. If the
-#'   user requests only the expected lifespan from birth, then only the first
-#'   entry of the expected lifespan vector is returned.
+#' referred to as __N__, contains the expected number of timesteps that an
+#' individual will spend in each age, stage, or size class of the matrix, given
+#' their current state.
 #'
 #' @param Umat The survival components of the population projection matrix
 #' @param all_ages User specifies whether the function should return the
@@ -86,6 +83,11 @@ r_nought<- function(Amat, Fmat){
 #'   survive. You may wish to convert to a standard time step, like days or
 #'   years.
 #' @export
+#'
+#' @details The expected lifespan vector contains the expected lifespan remaining for
+#'   an individual in each age, stage, or size class of the population. If the
+#'   user requests only the expected lifespan from birth, then only the first
+#'   entry of the expected lifespan vector is returned.
 #'
 #' @examples
 #' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)

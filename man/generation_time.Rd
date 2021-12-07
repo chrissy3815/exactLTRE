@@ -18,13 +18,10 @@ generation time will be the number of two-week intervals. You may wish to
 convert to a standard time step, like days or years.
 }
 \description{
-Generation time
-}
-\details{
-This calculation comes from Bienvenu and Legendre (2015, The
-American Naturalist; \href{https://doi.org/10.1086/681104}{doi}). They define the
-generation time as the average time between two events in the genealogy of
-the population.
+Generation time has been defined in multiple ways. This calculation comes
+from Bienvenu and Legendre (2015, The American Naturalist;
+\href{https://doi.org/10.1086/681104}{doi}). They define the generation time as
+the average time between two events in the genealogy of the population.
 }
 \examples{
 A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)

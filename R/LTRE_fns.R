@@ -104,6 +104,10 @@ approximateLTRE<- function(Aobj, method="random"){
 #' is "all" but this input can take any integer value. If maxint=3, then the
 #' output will include contributions terms up to 3-way interactions.
 #'
+#' @param mean_baseline A true/false switch that allows the user to specify whether
+#' the mean matrix should be treated as the baseline, or the reference matrix.
+#' The default behavior is to use the mean matrix. See details for more guidance
+#'
 #' @return This returns a list object, with 3 items: (1) a vector of the matrix
 #' indices where the parameters vary between/among the matrices in Aobj; (2) a
 #' list of the indices varying for each of the contribution terms provided; (3)
@@ -146,7 +150,7 @@ approximateLTRE<- function(Aobj, method="random"){
 #' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
 #' cont_diff<- exactLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
 #' cont_var<- exactLTRE(list(A1,A2,A3), method='random') # contributions to the variance of lambda
-exactLTRE<- function(Aobj, method="random", maxint="all"){
+exactLTRE<- function(Aobj, method="random", maxint="all", mean_baseline=TRUE){
 
   # if Aobj is passed in as a list, collapse into the row-format:
   if (is.list(Aobj)){
@@ -156,7 +160,7 @@ exactLTRE<- function(Aobj, method="random", maxint="all"){
   if (method=="random"){
     output<- exactLTRE_random(Aobj, maxint)
   } else if (method=="fixed"){
-    output<- exactLTRE_fixed(Aobj, maxint)
+    output<- exactLTRE_fixed(Aobj, maxint, mean_baseline)
   }
   return(output)
 }
@@ -403,6 +407,11 @@ exactLTRE_random<- function(Aobj, maxint="all"){
 #' is "all" but this input can take any integer value. If maxint=3, then the
 #' output will include contributions terms up to 3-way interactions.
 #'
+#' @param mean_baseline A true/false switch that allows the user to specify whether
+#' the mean matrix should be treated as the baseline, or the reference matrix.
+#' The default behavior is to use the mean matrix. See details for more guidance
+#' on this.
+#'
 #' @return This returns a list object, with 3 items: (1) a vector of the matrix
 #' indices where the parameters vary between/among the matrices in Aobj; (2) a
 #' list of the indices varying for each of the contribution terms provided; (3)
@@ -431,6 +440,15 @@ exactLTRE_random<- function(Aobj, maxint="all"){
 #'  the matrices. For a fixed design LTRE, exactly 2 matrices must be provided,
 #'  ordered as `[reference matrix, test matrix`].
 #'
+#'  \code{mean_baseline=TRUE} is most appropriate for comparisons where it is
+#'  not entirely obvious which population should be the reference and which
+#'  should be the test (for example, when comparing a wet and a dry year).
+#'  \code{mean_baseline=FALSE} is most appropriate for comparisons between a
+#'  control and treatment population in a controlled experiment.  We
+#'  set \code{mean_baseline=TRUE} as the default behavior because most population
+#'  projection models are built with field-collected data rather than controlled
+#'  experiment data.
+#'
 #' @export
 #'
 #' @examples
@@ -439,7 +457,10 @@ exactLTRE_random<- function(Aobj, maxint="all"){
 #' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
 #' cont_diff<- exactLTRE_fixed(list(A1,A2), maxint="all") # contributions to the difference in lambda
 #' cont_diff<- exactLTRE_fixed(list(A1,A2), maxint=2) # only first- and second-order terms
-exactLTRE_fixed<- function(Aobj, maxint="all"){
+#'
+#' # if A1 represents a control and A2 is a treatment:
+#' cont_diff<- exactLTRE_fixed(list(A1,A2), maxint="all", mean_baseline=FALSE)
+exactLTRE_fixed<- function(Aobj, maxint="all", mean_baseline = TRUE){
   # each row of Aobj should be the elements of an individual population matrix, collapsed column-wise
   # It is important that Aobj is 2 rows. Row 1 contains vec(Aref), and Row 2 contains vec(Atest)
 
@@ -468,8 +489,12 @@ exactLTRE_fixed<- function(Aobj, maxint="all"){
     }
   }
 
-  # calculate the matrix responses:
-  responses<- calc_matrix_responses(Aobj, ind_vary, FUN=lamDiff, maxint)
+  # calculate the matrix responses. We use a different function depending on whether mean_baseline=TRUE
+  if (mean_baseline==TRUE){
+    responses<- calc_matrix_responses(Aobj, ind_vary, FUN=lamDiff_meanBaseline, maxint)
+  } else if (mean_baseline==FALSE){
+    responses<- calc_matrix_responses(Aobj, ind_vary, FUN=lamDiff, maxint)
+  }
 
   # Calculate the effects or "epsilons," depending on maxint.
   if (maxint=="all"){ # use Poelwijk approach

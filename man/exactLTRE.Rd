@@ -4,7 +4,7 @@
 \alias{exactLTRE}
 \title{Exact LTRE analysis}
 \usage{
-exactLTRE(Aobj, method = "random", maxint = "all")
+exactLTRE(Aobj, method = "random", maxint = "all", mean_baseline = TRUE)
 }
 \arguments{
 \item{Aobj}{An object containing all the population projection matrices to be
@@ -22,6 +22,10 @@ See details for more information.}
 \item{maxint}{The maximum interaction order to be evaluated. The default input
 is "all" but this input can take any integer value. If maxint=3, then the
 output will include contributions terms up to 3-way interactions.}
+
+\item{mean_baseline}{A true/false switch that allows the user to specify whether
+the mean matrix should be treated as the baseline, or the reference matrix.
+The default behavior is to use the mean matrix. See details for more guidance}
 }
 \value{
 This returns a list object, with 3 items: (1) a vector of the matrix

@@ -16,13 +16,12 @@ The net reproductive output, a single value, is the number of
 offspring that an individual is expected to have over their lifespan.
 }
 \description{
-R0, the net reproductive output
-}
-\details{
-The net reproductive output is the largest eigenvalue of the matrix
-product of the fertility matrix and the fundamental matrix. The fundamental
-matrix, generally referred to as \strong{N}, contains the expected number of timesteps
-that an individual will spend in each age, stage, or size class of the matrix.
+The net reproductive output, R_0, is the expected number of offspring for one
+individual across their expected lifespan. It is calculated as the largest
+eigenvalue of the matrix product of the fertility matrix and the fundamental
+matrix. The fundamental matrix, generally referred to as \strong{N}, contains the
+expected number of timesteps that an individual will spend in each age,
+stage, or size class of the matrix.
 }
 \examples{
 A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)

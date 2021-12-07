@@ -23,14 +23,13 @@ survive. You may wish to convert to a standard time step, like days or
 years.
 }
 \description{
-Expected lifespan
-}
-\details{
 The expected lifespan vector is calculated by multiplying a column
 of ones by the fundamental matrix. The fundamental matrix, generally
 referred to as \strong{N}, contains the expected number of timesteps that an
-individual will spend in each age, stage, or size class of the matrix.
-
+individual will spend in each age, stage, or size class of the matrix, given
+their current state.
+}
+\details{
 The expected lifespan vector contains the expected lifespan remaining for
 an individual in each age, stage, or size class of the population. If the
 user requests only the expected lifespan from birth, then only the first

@@ -7,8 +7,8 @@
 cov_matrix(Aobj)
 }
 \arguments{
-\item{Aobj}{A list of matrix population models, which must all have the same
-dimensions.}
+\item{Aobj}{A matrix where each row is the column-wise vectorization of a
+population projection matrix.}
 }
 \value{
 The variance-covariance matrix for the vital rates of the population
@@ -19,9 +19,18 @@ then the variance-covariance matrix will have dimensions n^2-by-n^2.
 Calculate the variance-covariance matrix for the vital rates of a series of
 population projection matrices.
 }
+\details{
+The diagonal entries of the variance-covariance matrix give the
+variance of the entries in each index of the matrix. The off-diagonal entries
+of the variance-covariance matrix give the covariance of entries in each index
+of the matrix. The variance-covariance matrix is symmetrical, and the
+covariance of a given pair of vital rates is the sum of the two corresponding
+indices.
+}
 \examples{
 A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
 A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
 A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
-covmat<- cov_matrix(list(A1,A2,A3))
+A_all<- collapse_mat_list(list(A1, A2, A3))
+covmat<- cov_matrix(A_all)
 }

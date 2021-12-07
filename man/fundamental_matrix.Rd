@@ -10,7 +10,9 @@ fundamental_matrix(Umat)
 \item{Umat}{The survival components of the population projection matrix.}
 }
 \value{
-The fundamental matrix will have the same size as the input matrix.
+The fundamental matrix, containing the expected number of timesteps
+that an individual will spend in each class of the population, given their
+current state. This matrix will have the same size as the input matrix.
 }
 \description{
 Calculate the fundamental matrix. The fundamental matrix, generally referred
