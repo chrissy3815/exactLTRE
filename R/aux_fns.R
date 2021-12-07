@@ -385,7 +385,7 @@ lamDiff_meanBaseline<- function(Aobj, which.fixed=NULL) {
 #'
 #' @param n The number of observed parameters, mutation sites, etc.
 #'
-#' @return A matrix that is x-by-x.
+#' @return A matrix that is 2^n-by-2^n.
 #' @export
 #'
 #' @examples
@@ -400,6 +400,46 @@ make.Gmatrix<-function(n) {
 }
 
 # A lower-level function for calculating the responses of a matrix, according to some other function:
+#' Responses to changing entries of a matrix
+#'
+#' Calculate the responses of varying certain entries of a matrix. This function
+#' takes a set of matrix population models, the indices of parameters that vary
+#' in those matrices, and a response function. For example, difference or variance
+#' in lambda (the leading eigenvalue of a population projection matrix).
+#'
+#' @param Aobj An object containing all the population projection matrices to be
+#'  included in the analysis. It should either be a list, or a matrix where each
+#'  row is the column-wise vectorization of a matrix.
+#' @param ind_vary A vector containing the column-wise (single-value) indices of
+#' the population projection matrices that vary.
+#' @param FUN The name of the function to be used for calculating responses. For
+#' example, \code{\link{lamVar}}, \code{\link{lamDiff}}, and \code{\link{lamDiff_meanBaseline}}
+#' @param maxint The maximum interaction order to be evaluated. The default input
+#' is "all" but this input can take any integer value. If maxint=3, then the
+#' output will include contributions terms up to 3-way interactions.
+#'
+#' @return This returns a list object, with 2 items: (1) a
+#' list of the indices varying for each of the responses terms; and (2)
+#' a vector of responses.
+#'
+#'  \code{list_ind_vary} is a list object, where each entry is a vector
+#'  containing the indices (the combinations of the elements of `ind_vary`, an
+#'  input parameter) that varied (were *not* held fixed) for the corresponding
+#'  entry in the `nu` vector.
+#'
+#'  \code{nus} is a vector of responses, calculated using the function provided
+#'  in \code{FUN}.
+#' @export
+#'
+#' @seealso \code{\link{lamVar}}, \code{\link{lamDiff}}, and \code{\link{lamDiff_meanBaseline}}
+#'
+#' @examples
+#' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+#' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
+#' A_all<- collapse_mat_list(list(A1, A2, A3))
+#' nu_var<- calc_matrix_responses(A_all, c(2,6,7,9), FUN=lamVar, maxint="all")
+#' nu_diff<- calc_matrix_responses(list(A1,A2), c(2,6,7,9), FUN=lamDiff_meanBaseline, maxint="all")
 calc_matrix_responses<- function(Aobj, ind_vary, FUN, maxint="all"){
   # count how many indices vary:
   n_vary<- length(ind_vary)
@@ -458,6 +498,32 @@ calc_matrix_responses<- function(Aobj, ind_vary, FUN, maxint="all"){
 }
 
 # An alternative to using the Gmatrix approach, this converts from responses to effects:
+#' Effects of matrix parameters
+#'
+#' Calculate the effects of differences or variance in vital rate entries in a
+#' set of matrix population models, for a given set of interaction terms.
+#'
+#' @param responses A vector of the responses due to the parameters of a matrix
+#' population model and their interactions.
+#' @param list_ind_vary A list object, where each entry is a vector
+#'  containing the indices (the combinations of the elements of `ind_vary`, an
+#'  input parameter) that varied (were *not* held fixed) for the corresponding
+#'  entry in the `responses` vector.
+#'
+#' @return A vector of effects, which are the responses due to a given interaction
+#' order, controlling for the lower-level interaction terms. These are the epsilon
+#' terms in an fANOVA decomposition.
+#' @export
+#'
+#' @examples
+#' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+#' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
+#' A_all<- collapse_mat_list(list(A1, A2, A3))
+#' nu_var<- calc_matrix_responses(A_all, c(2,6,7,9), FUN=lamVar, maxint="all")
+#' nu_diff<- calc_matrix_responses(list(A1,A2), c(2,6,7,9), FUN=lamDiff_meanBaseline, maxint="all")
+#' epsilon_var<- calc_matrix_effects(nu_var$nus, nu_var$list_ind_vary)
+#' epsilon_diff<- calc_matrix_effects(nu_diff$nus, nu_diff$list_ind_vary)
 calc_matrix_effects<- function(responses, list_ind_vary){
   effects<- vector(length=length(list_ind_vary))
   effects[1]<- responses[1]
@@ -487,10 +553,43 @@ calc_matrix_effects<- function(responses, list_ind_vary){
 }
 
 # Run matrix checks on an Aobj array (each row is a matrix, collapsed column-wise):
+#' Automated checks for a set of matrices
+#'
+#' Run automated checks for a set of population projection matrices. This code will
+#' check if the matrices are square, strictly non-negative, ergodic, irreducible,
+#' and primitive. The last check is for whether the column sums are greater than 1
+#' for presumed survival terms. For this portion, the code assumes that the first
+#' row represents only fertility, and that all other matrix entries represent
+#' only survival.
+#'
+#' @param Aobj An object containing the population projection matrices to be
+#'  included in the analysis. It should either be a list, or a matrix where each
+#'  row is the column-wise vectorization of a matrix.
+#'
+#' @return If all the checks pass, then nothing is returned. If one of the checks
+#' fails, then an error or warning message will be returned.
+#' @export
+#'
+#' @examples
+#' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+#' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
+#' run_matrix_checks(list(A1,A2,A3))
+#' # A couple of examples that would throw errors or warnings:
+#' # run_matrix_checks(c(0,0.8,0, -1,0,0.7, 5,0,0.2)) # has a negative value
+#' # run_matrix_checks(c(0,0.8,0, 0,0.5,0.7, 5,0,0.2)) # has a column-sum greater than 1
 run_matrix_checks<- function(Aobj){
+  # If Aobj is a list, collapse to run the checks:
+  if (is.list(Aobj)){
+    Aobj<- collapse_mat_list(Aobj)
+  }
+  if (is.null(dim(Aobj))){
+    Aobj<- matrix(Aobj, nrow=1)
+  }
+
   # Check 1: are they all square matrices?
   n_elements<- length(Aobj[1,])
-  if (n_elements%%1!=0){
+  if (sqrt(n_elements)%%1!=0){
     stop("Your matrices do not appear to be square.", call.=FALSE)
   }
   # Check 2: Are all elements non-negative?

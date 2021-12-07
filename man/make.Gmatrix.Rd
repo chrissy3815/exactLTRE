@@ -10,7 +10,7 @@ make.Gmatrix(n)
 \item{n}{The number of observed parameters, mutation sites, etc.}
 }
 \value{
-A matrix that is x-by-x.
+A matrix that is 2^n-by-2^n.
 }
 \description{
 The G-matrix is the operator used for calculating a vector of effects from a
