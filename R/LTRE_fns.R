@@ -105,8 +105,9 @@ approximateLTRE<- function(Aobj, method="random"){
 #' output will include contributions terms up to 3-way interactions.
 #'
 #' @param fixed.directional A true/false switch that allows the user to specify
-#' whether a directional LTRE should be used. The default behavior is to use a
-#' symmetric LTRE, where the mean matrix is as the baseline.
+#' whether a directional LTRE should be used. The default behavior is to calculate
+#' a symmetric LTRE, where the mean matrix is used as the baseline. See details
+#' for more guidance.
 #'
 #' @return This returns a list object, with 3 items: (1) a vector of the matrix
 #' indices where the parameters vary between/among the matrices in Aobj; (2) a
@@ -427,9 +428,9 @@ exactLTRE_random<- function(Aobj, maxint="all"){
 #' output will include contributions terms up to 3-way interactions.
 #'
 #' @param fixed.directional A true/false switch that allows the user to specify
-#' whether a directional LTRE should be used. The default behavior is to use a
-#' symmetric LTRE, where the mean matrix is as the baseline. See details for more
-#' guidance.
+#' whether a directional LTRE should be used. The default behavior is to calculate
+#' a symmetric LTRE, where the mean matrix is used as the baseline. See details
+#' for more guidance.
 #'
 #' @return This returns a list object, with 3 items: (1) a vector of the matrix
 #' indices where the parameters vary between/among the matrices in Aobj; (2) a

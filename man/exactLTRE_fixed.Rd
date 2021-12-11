@@ -17,9 +17,9 @@ is "all" but this input can take any integer value. If maxint=3, then the
 output will include contributions terms up to 3-way interactions.}
 
 \item{fixed.directional}{A true/false switch that allows the user to specify
-whether a directional LTRE should be used. The default behavior is to use a
-symmetric LTRE, where the mean matrix is as the baseline. See details for more
-guidance.}
+whether a directional LTRE should be used. The default behavior is to calculate
+a symmetric LTRE, where the mean matrix is used as the baseline. See details
+for more guidance.}
 }
 \value{
 This returns a list object, with 3 items: (1) a vector of the matrix
