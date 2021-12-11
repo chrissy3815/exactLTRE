@@ -211,13 +211,13 @@ lamVar<- function(Aobj, which.fixed=NULL) {
 #' \eqn{reference matrix - test matrix}, and the function assumes that the
 #' provided matrices are ordered \[reference, test\].
 #'
-#' This function differs from \code{lamDiff_meanBaseline} because it uses the reference
+#' This function differs from \code{lamDiff_symmetric} because it uses the reference
 #' matrix as the baseline. So fixed parameters are set to the values in the
-#' reference matrix. In \code{lamDiff_meanBaseline}, the fixed parameters would be set
+#' reference matrix. In \code{lamDiff_symmetric}, the fixed parameters would be set
 #' to their mean values.
 #'
 #' \code{lamDiff} is most appropriate for comparisons between a control and treatment
-#' population in a controlled experiment. \code{lamDiff_meanBaseline} is more
+#' population in a controlled experiment. \code{lamDiff_symmetric} is more
 #' appropriate for comparisons where it is not entirely obvious which population
 #' should be the reference and which should be the test (for example, when
 #' comparing a wet and a dry year).
@@ -233,7 +233,7 @@ lamVar<- function(Aobj, which.fixed=NULL) {
 #' @return A single value for the difference in lambda.
 #' @export
 #'
-#' @seealso \code{\link{lamDiff_meanBaseline}} \code{\link{lamVar}}
+#' @seealso \code{\link{lamDiff_symmetric}} \code{\link{lamVar}}
 #'
 #' @examples
 #' Aref<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
@@ -302,7 +302,7 @@ lamDiff<- function(Aobj, which.fixed=NULL) {
 #' given by the reference matrix.
 #'
 #' \code{lamDiff} is most appropriate for comparisons between a control and treatment
-#' population in a controlled experiment. \code{lamDiff_meanBaseline} is more
+#' population in a controlled experiment. \code{lamDiff_symmetric} is more
 #' appropriate for comparisons where it is not entirely obvious which population
 #' should be the reference and which should be the test (for example, when
 #' comparing a wet and a dry year).
@@ -324,9 +324,9 @@ lamDiff<- function(Aobj, which.fixed=NULL) {
 #' Aref<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
 #' Atest<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
 #' A_all<- list(Aref,Atest)
-#' diff_all_vary<- lamDiff_meanBaseline(A_all)
-#' diff_fert_vary<- lamDiff_meanBaseline(A_all, which.fixed=c(2,6,9))
-lamDiff_meanBaseline<- function(Aobj, which.fixed=NULL) {
+#' diff_all_vary<- lamDiff_symmetric(A_all)
+#' diff_fert_vary<- lamDiff_symmetric(A_all, which.fixed=c(2,6,9))
+lamDiff_symmetric<- function(Aobj, which.fixed=NULL) {
   # Aobj can either be a list of matrices, where Aobj[[1]] is Aref and Aobj[[2]] is Atest
   # or have 2 rows that are the vec(Aref) and vec(Atest)
 
@@ -413,7 +413,7 @@ make.Gmatrix<-function(n) {
 #' @param ind_vary A vector containing the column-wise (single-value) indices of
 #' the population projection matrices that vary.
 #' @param FUN The name of the function to be used for calculating responses. For
-#' example, \code{\link{lamVar}}, \code{\link{lamDiff}}, and \code{\link{lamDiff_meanBaseline}}
+#' example, \code{\link{lamVar}}, \code{\link{lamDiff}}, and \code{\link{lamDiff_symmetric}}
 #' @param maxint The maximum interaction order to be evaluated. The default input
 #' is "all" but this input can take any integer value. If maxint=3, then the
 #' output will include contributions terms up to 3-way interactions.
@@ -431,7 +431,7 @@ make.Gmatrix<-function(n) {
 #'  in \code{FUN}.
 #' @export
 #'
-#' @seealso \code{\link{lamVar}}, \code{\link{lamDiff}}, and \code{\link{lamDiff_meanBaseline}}
+#' @seealso \code{\link{lamVar}}, \code{\link{lamDiff}}, and \code{\link{lamDiff_symmetric}}
 #'
 #' @examples
 #' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
@@ -439,7 +439,7 @@ make.Gmatrix<-function(n) {
 #' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
 #' A_all<- collapse_mat_list(list(A1, A2, A3))
 #' nu_var<- calc_matrix_responses(A_all, c(2,6,7,9), FUN=lamVar, maxint="all")
-#' nu_diff<- calc_matrix_responses(list(A1,A2), c(2,6,7,9), FUN=lamDiff_meanBaseline, maxint="all")
+#' nu_diff<- calc_matrix_responses(list(A1,A2), c(2,6,7,9), FUN=lamDiff_symmetric, maxint="all")
 calc_matrix_responses<- function(Aobj, ind_vary, FUN, maxint="all"){
   # count how many indices vary:
   n_vary<- length(ind_vary)
@@ -521,7 +521,7 @@ calc_matrix_responses<- function(Aobj, ind_vary, FUN, maxint="all"){
 #' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
 #' A_all<- collapse_mat_list(list(A1, A2, A3))
 #' nu_var<- calc_matrix_responses(A_all, c(2,6,7,9), FUN=lamVar, maxint="all")
-#' nu_diff<- calc_matrix_responses(list(A1,A2), c(2,6,7,9), FUN=lamDiff_meanBaseline, maxint="all")
+#' nu_diff<- calc_matrix_responses(list(A1,A2), c(2,6,7,9), FUN=lamDiff_symmetric, maxint="all")
 #' epsilon_var<- calc_matrix_effects(nu_var$nus, nu_var$list_ind_vary)
 #' epsilon_diff<- calc_matrix_effects(nu_diff$nus, nu_diff$list_ind_vary)
 calc_matrix_effects<- function(responses, list_ind_vary){

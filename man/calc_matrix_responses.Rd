@@ -15,7 +15,7 @@ row is the column-wise vectorization of a matrix.}
 the population projection matrices that vary.}
 
 \item{FUN}{The name of the function to be used for calculating responses. For
-example, \code{\link{lamVar}}, \code{\link{lamDiff}}, and \code{\link{lamDiff_meanBaseline}}}
+example, \code{\link{lamVar}}, \code{\link{lamDiff}}, and \code{\link{lamDiff_symmetric}}}
 
 \item{maxint}{The maximum interaction order to be evaluated. The default input
 is "all" but this input can take any integer value. If maxint=3, then the
@@ -46,8 +46,8 @@ A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
 A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
 A_all<- collapse_mat_list(list(A1, A2, A3))
 nu_var<- calc_matrix_responses(A_all, c(2,6,7,9), FUN=lamVar, maxint="all")
-nu_diff<- calc_matrix_responses(list(A1,A2), c(2,6,7,9), FUN=lamDiff_meanBaseline, maxint="all")
+nu_diff<- calc_matrix_responses(list(A1,A2), c(2,6,7,9), FUN=lamDiff_symmetric, maxint="all")
 }
 \seealso{
-\code{\link{lamVar}}, \code{\link{lamDiff}}, and \code{\link{lamDiff_meanBaseline}}
+\code{\link{lamVar}}, \code{\link{lamDiff}}, and \code{\link{lamDiff_symmetric}}
 }

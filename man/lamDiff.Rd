@@ -33,13 +33,13 @@ lambda due to difference in adult fertility. The difference is taken as
 provided matrices are ordered [reference, test].
 }
 \details{
-This function differs from \code{lamDiff_meanBaseline} because it uses the reference
+This function differs from \code{lamDiff_symmetric} because it uses the reference
 matrix as the baseline. So fixed parameters are set to the values in the
-reference matrix. In \code{lamDiff_meanBaseline}, the fixed parameters would be set
+reference matrix. In \code{lamDiff_symmetric}, the fixed parameters would be set
 to their mean values.
 
 \code{lamDiff} is most appropriate for comparisons between a control and treatment
-population in a controlled experiment. \code{lamDiff_meanBaseline} is more
+population in a controlled experiment. \code{lamDiff_symmetric} is more
 appropriate for comparisons where it is not entirely obvious which population
 should be the reference and which should be the test (for example, when
 comparing a wet and a dry year).
@@ -52,5 +52,5 @@ diff_all_vary<- lamDiff(A_all)
 diff_fert_vary<- lamDiff(A_all, which.fixed=c(2,6,9))
 }
 \seealso{
-\code{\link{lamDiff_meanBaseline}} \code{\link{lamVar}}
+\code{\link{lamDiff_symmetric}} \code{\link{lamVar}}
 }

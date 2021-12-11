@@ -104,9 +104,9 @@ approximateLTRE<- function(Aobj, method="random"){
 #' is "all" but this input can take any integer value. If maxint=3, then the
 #' output will include contributions terms up to 3-way interactions.
 #'
-#' @param mean_baseline A true/false switch that allows the user to specify whether
-#' the mean matrix should be treated as the baseline, or the reference matrix.
-#' The default behavior is to use the mean matrix. See details for more guidance
+#' @param fixed.directional A true/false switch that allows the user to specify
+#' whether a directional LTRE should be used. The default behavior is to use a
+#' symmetric LTRE, where the mean matrix is as the baseline.
 #'
 #' @return This returns a list object, with 3 items: (1) a vector of the matrix
 #' indices where the parameters vary between/among the matrices in Aobj; (2) a
@@ -141,6 +141,25 @@ approximateLTRE<- function(Aobj, method="random"){
 #'  covariance in the entries at each position in the matrices. For a random
 #'  design LTRE, at least 2 matrices must be provided.
 #'
+#'  \code{fixed.directional=FALSE} is most appropriate for comparisons where it is
+#'  not entirely obvious which population should be the reference and which
+#'  should be the test (for example, when comparing a wet and a dry year). In
+#'  this case, the difference in lambda is decomposed using the mean matrix as
+#'  the baseline. The decomposition is symmetric, meaning that if the test and
+#'  reference matrix are swapped, the contributions from the vital rates will be
+#'  equal in magnitude, but positive contributions will become negative and vice
+#'  versa.
+#'
+#'  \code{fixed.directional=TRUE} is most appropriate for comparisons between a
+#'  control and treatment population in a controlled experiment. In this case,
+#'  the reference matrix is treated as the baseline. This is a directional analysis,
+#'  meaning that if the reference and test matrices were to be swapped, the
+#'  contributions of the vital rates would change.
+#'
+#'  We set \code{fixed.directional=FALSE} as the default behavior because most
+#'  population projection models are built with field-collected data rather than
+#'  controlled experiment data.
+#'
 #'
 #' @export
 #'
@@ -150,7 +169,7 @@ approximateLTRE<- function(Aobj, method="random"){
 #' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
 #' cont_diff<- exactLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
 #' cont_var<- exactLTRE(list(A1,A2,A3), method='random') # contributions to the variance of lambda
-exactLTRE<- function(Aobj, method="random", maxint="all", mean_baseline=TRUE){
+exactLTRE<- function(Aobj, method="random", maxint="all", fixed.directional=FALSE){
 
   # if Aobj is passed in as a list, collapse into the row-format:
   if (is.list(Aobj)){
@@ -160,7 +179,7 @@ exactLTRE<- function(Aobj, method="random", maxint="all", mean_baseline=TRUE){
   if (method=="random"){
     output<- exactLTRE_random(Aobj, maxint)
   } else if (method=="fixed"){
-    output<- exactLTRE_fixed(Aobj, maxint, mean_baseline)
+    output<- exactLTRE_fixed(Aobj, maxint, fixed.directional)
   }
   return(output)
 }
@@ -407,10 +426,10 @@ exactLTRE_random<- function(Aobj, maxint="all"){
 #' is "all" but this input can take any integer value. If maxint=3, then the
 #' output will include contributions terms up to 3-way interactions.
 #'
-#' @param mean_baseline A true/false switch that allows the user to specify whether
-#' the mean matrix should be treated as the baseline, or the reference matrix.
-#' The default behavior is to use the mean matrix. See details for more guidance
-#' on this.
+#' @param fixed.directional A true/false switch that allows the user to specify
+#' whether a directional LTRE should be used. The default behavior is to use a
+#' symmetric LTRE, where the mean matrix is as the baseline. See details for more
+#' guidance.
 #'
 #' @return This returns a list object, with 3 items: (1) a vector of the matrix
 #' indices where the parameters vary between/among the matrices in Aobj; (2) a
@@ -440,14 +459,24 @@ exactLTRE_random<- function(Aobj, maxint="all"){
 #'  the matrices. For a fixed design LTRE, exactly 2 matrices must be provided,
 #'  ordered as `[reference matrix, test matrix`].
 #'
-#'  \code{mean_baseline=TRUE} is most appropriate for comparisons where it is
+#'  \code{fixed.directional=FALSE} is most appropriate for comparisons where it is
 #'  not entirely obvious which population should be the reference and which
-#'  should be the test (for example, when comparing a wet and a dry year).
-#'  \code{mean_baseline=FALSE} is most appropriate for comparisons between a
-#'  control and treatment population in a controlled experiment.  We
-#'  set \code{mean_baseline=TRUE} as the default behavior because most population
-#'  projection models are built with field-collected data rather than controlled
-#'  experiment data.
+#'  should be the test (for example, when comparing a wet and a dry year). In
+#'  this case, the difference in lambda is decomposed using the mean matrix as
+#'  the baseline. The decomposition is symmetric, meaning that if the test and
+#'  reference matrix are swapped, the contributions from the vital rates will be
+#'  equal in magnitude, but positive contributions will become negative and vice
+#'  versa.
+#'
+#'  \code{fixed.directional=TRUE} is most appropriate for comparisons between a
+#'  control and treatment population in a controlled experiment. In this case,
+#'  the reference matrix is treated as the baseline. This is a directional analysis,
+#'  meaning that if the reference and test matrices were to be swapped, the
+#'  contributions of the vital rates would change.
+#'
+#'  We set \code{fixed.directional=FALSE} as the default behavior because most
+#'  population projection models are built with field-collected data rather than
+#'  controlled experiment data.
 #'
 #' @export
 #'
@@ -459,8 +488,8 @@ exactLTRE_random<- function(Aobj, maxint="all"){
 #' cont_diff<- exactLTRE_fixed(list(A1,A2), maxint=2) # only first- and second-order terms
 #'
 #' # if A1 represents a control and A2 is a treatment:
-#' cont_diff<- exactLTRE_fixed(list(A1,A2), maxint="all", mean_baseline=FALSE)
-exactLTRE_fixed<- function(Aobj, maxint="all", mean_baseline = TRUE){
+#' cont_diff<- exactLTRE_fixed(list(A1,A2), maxint="all", fixed.directional=TRUE)
+exactLTRE_fixed<- function(Aobj, maxint="all", fixed.directional=FALSE){
   # each row of Aobj should be the elements of an individual population matrix, collapsed column-wise
   # It is important that Aobj is 2 rows. Row 1 contains vec(Aref), and Row 2 contains vec(Atest)
 
@@ -489,10 +518,10 @@ exactLTRE_fixed<- function(Aobj, maxint="all", mean_baseline = TRUE){
     }
   }
 
-  # calculate the matrix responses. We use a different function depending on whether mean_baseline=TRUE
-  if (mean_baseline==TRUE){
-    responses<- calc_matrix_responses(Aobj, ind_vary, FUN=lamDiff_meanBaseline, maxint)
-  } else if (mean_baseline==FALSE){
+  # calculate the matrix responses. We use a different function depending on whether fixed.directional=TRUE
+  if (fixed.directional==FALSE){
+    responses<- calc_matrix_responses(Aobj, ind_vary, FUN=lamDiff_symmetric, maxint)
+  } else if (fixed.directional==TRUE){
     responses<- calc_matrix_responses(Aobj, ind_vary, FUN=lamDiff, maxint)
   }
 

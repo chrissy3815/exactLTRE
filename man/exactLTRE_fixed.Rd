@@ -4,7 +4,7 @@
 \alias{exactLTRE_fixed}
 \title{Exact LTRE analysis: fixed design}
 \usage{
-exactLTRE_fixed(Aobj, maxint = "all", mean_baseline = TRUE)
+exactLTRE_fixed(Aobj, maxint = "all", fixed.directional = FALSE)
 }
 \arguments{
 \item{Aobj}{An object containing all the population projection matrices to be
@@ -16,10 +16,10 @@ row is the column-wise vectorization of a matrix. For fixed design, exactly
 is "all" but this input can take any integer value. If maxint=3, then the
 output will include contributions terms up to 3-way interactions.}
 
-\item{mean_baseline}{A true/false switch that allows the user to specify whether
-the mean matrix should be treated as the baseline, or the reference matrix.
-The default behavior is to use the mean matrix. See details for more guidance
-on this.}
+\item{fixed.directional}{A true/false switch that allows the user to specify
+whether a directional LTRE should be used. The default behavior is to use a
+symmetric LTRE, where the mean matrix is as the baseline. See details for more
+guidance.}
 }
 \value{
 This returns a list object, with 3 items: (1) a vector of the matrix
@@ -60,14 +60,24 @@ decomposes the difference in lambda due to differences at each position of
 the matrices. For a fixed design LTRE, exactly 2 matrices must be provided,
 ordered as \verb{[reference matrix, test matrix}].
 
-\code{mean_baseline=TRUE} is most appropriate for comparisons where it is
+\code{fixed.directional=FALSE} is most appropriate for comparisons where it is
 not entirely obvious which population should be the reference and which
-should be the test (for example, when comparing a wet and a dry year).
-\code{mean_baseline=FALSE} is most appropriate for comparisons between a
-control and treatment population in a controlled experiment.  We
-set \code{mean_baseline=TRUE} as the default behavior because most population
-projection models are built with field-collected data rather than controlled
-experiment data.
+should be the test (for example, when comparing a wet and a dry year). In
+this case, the difference in lambda is decomposed using the mean matrix as
+the baseline. The decomposition is symmetric, meaning that if the test and
+reference matrix are swapped, the contributions from the vital rates will be
+equal in magnitude, but positive contributions will become negative and vice
+versa.
+
+\code{fixed.directional=TRUE} is most appropriate for comparisons between a
+control and treatment population in a controlled experiment. In this case,
+the reference matrix is treated as the baseline. This is a directional analysis,
+meaning that if the reference and test matrices were to be swapped, the
+contributions of the vital rates would change.
+
+We set \code{fixed.directional=FALSE} as the default behavior because most
+population projection models are built with field-collected data rather than
+controlled experiment data.
 }
 \examples{
 A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
@@ -77,5 +87,5 @@ cont_diff<- exactLTRE_fixed(list(A1,A2), maxint="all") # contributions to the di
 cont_diff<- exactLTRE_fixed(list(A1,A2), maxint=2) # only first- and second-order terms
 
 # if A1 represents a control and A2 is a treatment:
-cont_diff<- exactLTRE_fixed(list(A1,A2), maxint="all", mean_baseline=FALSE)
+cont_diff<- exactLTRE_fixed(list(A1,A2), maxint="all", fixed.directional=TRUE)
 }

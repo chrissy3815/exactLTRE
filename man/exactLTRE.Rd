@@ -4,7 +4,7 @@
 \alias{exactLTRE}
 \title{Exact LTRE analysis}
 \usage{
-exactLTRE(Aobj, method = "random", maxint = "all", mean_baseline = TRUE)
+exactLTRE(Aobj, method = "random", maxint = "all", fixed.directional = FALSE)
 }
 \arguments{
 \item{Aobj}{An object containing all the population projection matrices to be
@@ -23,9 +23,9 @@ See details for more information.}
 is "all" but this input can take any integer value. If maxint=3, then the
 output will include contributions terms up to 3-way interactions.}
 
-\item{mean_baseline}{A true/false switch that allows the user to specify whether
-the mean matrix should be treated as the baseline, or the reference matrix.
-The default behavior is to use the mean matrix. See details for more guidance}
+\item{fixed.directional}{A true/false switch that allows the user to specify
+whether a directional LTRE should be used. The default behavior is to use a
+symmetric LTRE, where the mean matrix is as the baseline.}
 }
 \value{
 This returns a list object, with 3 items: (1) a vector of the matrix
@@ -70,6 +70,25 @@ ordered as \verb{[reference matrix, test matrix}].
 A random design LTRE decomposes the variance in lambda due to variance and
 covariance in the entries at each position in the matrices. For a random
 design LTRE, at least 2 matrices must be provided.
+
+\code{fixed.directional=FALSE} is most appropriate for comparisons where it is
+not entirely obvious which population should be the reference and which
+should be the test (for example, when comparing a wet and a dry year). In
+this case, the difference in lambda is decomposed using the mean matrix as
+the baseline. The decomposition is symmetric, meaning that if the test and
+reference matrix are swapped, the contributions from the vital rates will be
+equal in magnitude, but positive contributions will become negative and vice
+versa.
+
+\code{fixed.directional=TRUE} is most appropriate for comparisons between a
+control and treatment population in a controlled experiment. In this case,
+the reference matrix is treated as the baseline. This is a directional analysis,
+meaning that if the reference and test matrices were to be swapped, the
+contributions of the vital rates would change.
+
+We set \code{fixed.directional=FALSE} as the default behavior because most
+population projection models are built with field-collected data rather than
+controlled experiment data.
 }
 \examples{
 A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
