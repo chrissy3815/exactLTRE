@@ -4,6 +4,7 @@
 # exactLTRE
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 The goal of exactLTRE is to provide a set of friendly tools to increase
@@ -45,15 +46,36 @@ This is a basic example which shows you how to solve a common problem:
 ``` r
 library(exactLTRE)
 ## basic example code
+A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
+
+## approximate LTRE examples:
+cont_diff<- approximateLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
+# contributions to the variance of lambda
+cont_var<- approximateLTRE(list(A1,A2,A3), method='random')
+
+## exact LTRE examples:
+cont_diff<- exactLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
+cont_var<- exactLTRE(list(A1,A2,A3), method='random') # contributions to the variance of lambda
 ```
 
 <!-- What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so: -->
+
 <!-- ```{r cars} -->
+
 <!-- summary(cars) -->
+
 <!-- ``` -->
+
 <!-- You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>. -->
+
 <!-- You can also embed plots, for example: -->
+
 <!-- ```{r pressure, echo = FALSE} -->
+
 <!-- plot(pressure) -->
+
 <!-- ``` -->
+
 <!-- In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN. -->
