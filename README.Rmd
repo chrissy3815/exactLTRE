@@ -54,6 +54,19 @@ This is a basic example which shows you how to solve a common problem:
 ```{r example}
 library(exactLTRE)
 ## basic example code
+A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
+
+## approximate LTRE examples:
+cont_diff<- approximateLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
+# contributions to the variance of lambda
+cont_var<- approximateLTRE(list(A1,A2,A3), method='random')
+
+## exact LTRE examples:
+cont_diff<- exactLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
+cont_var<- exactLTRE(list(A1,A2,A3), method='random') # contributions to the variance of lambda
+
 ```
 
 <!-- What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so: -->
