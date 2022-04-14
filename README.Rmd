@@ -67,7 +67,8 @@ A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
 # contributions to the difference in lambda for a directional design
 cont_directional<- exactLTRE(list(A1,A2), method='fixed', fixed.directional=TRUE) 
 # contributions to the difference in lambda for a symmetric design
-cont_symmetric<- exactLTRE(list(A1,A2), method='fixed', fixed.directional=FALSE) 
+cont_symmetric<- exactLTRE(list(A1,A2), method='fixed', fixed.directional=FALSE)
+
 ```
 
 ## Random Design LTRE
