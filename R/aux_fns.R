@@ -256,7 +256,7 @@ lamDiff<- function(Aobj, which.fixed=NULL) {
     Mtest<- Aobj # make a copy so that we can do which.fixed and then calculate lambda's
   } else { # if Aobj isn't a list, then we assume it's a matrix.
     if (dim(Aobj)[1]>2){
-      warning("Aobj contains more than 2 matrices. lamDiff assumes Aobj[1,] is vec(Aref) and Aobj[,2] is vec(Atest).")
+      warning("Aobj contains more than 2 matrices. lamDiff assumes Aobj[1,] is vec(Aref) and Aobj[2,] is vec(Atest).")
     } else if (dim(Aobj)[1]<2){
       stop("Aobj contains fewer than 2 matrices, so we cannot compute the difference in lambda.")
     }
@@ -342,7 +342,7 @@ lamDiff_symmetric<- function(Aobj, which.fixed=NULL) {
     Amean<- mean_matrix(Aobj)
   } else { # if Aobj isn't a list, then we assume it's a matrix.
     if (dim(Aobj)[1]>2){
-      warning("Aobj contains more than 2 matrices. lamDiff assumes Aobj[1,] is vec(Aref) and Aobj[,2] is vec(Atest).")
+      warning("Aobj contains more than 2 matrices. lamDiff assumes Aobj[1,] is vec(Aref) and Aobj[2,] is vec(Atest).")
     } else if (dim(Aobj)[1]<2){
       stop("Aobj contains fewer than 2 matrices, so we cannot compute the difference in lambda.")
     }

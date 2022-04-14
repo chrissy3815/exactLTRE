@@ -45,16 +45,49 @@ You can install the development version of exactLTRE from [GitHub](https://githu
 ``` r
 # install.packages("devtools")
 devtools::install_github("chrissy3815/exactLTRE")
+# if that doesn't work, try:
+devtools::install_github("chrissy3815/exactLTRE", ref="main")
 ```
 
-## Example
+## Fixed Design LTRE
 
-This is a basic example which shows you how to solve a common problem:
+A fixed design LTRE decomposes the difference in population growth rate ("lambda," 
+i.e. the leading eigenvalue of the population projection matrix) into the 
+contributions from differences in the vital rates, and their interactions.
+
+A fixed design LTRE compares exactly two matrices. This can be done either as
+a symmetric or directional analysis, and it should match the experimental design
+for the data collection.
 
 ```{r example}
 library(exactLTRE)
 ## basic example code
+A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+# contributions to the difference in lambda for a directional design
+cont_directional<- exactLTRE(list(A1,A2), method='fixed', fixed.directional=TRUE) 
+# contributions to the difference in lambda for a symmetric design
+cont_symmetric<- exactLTRE(list(A1,A2), method='fixed', fixed.directional=FALSE) 
 ```
+
+## Random Design LTRE
+
+A random design LTRE decomposes the variance in population growth rate ("lambda," 
+i.e. the leading eigenvalue of the population projection matrix) into the 
+contributions from (co)variances of the vital rates and their interactions.
+
+A random design LTRE can be used on an unordered list of two or more matrices.
+
+```{r random}
+library(exactLTRE)
+## basic example code
+A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
+# contributions to the variance of lambda
+cont_var<- exactLTRE(list(A1,A2,A3), method='random')
+```
+
 
 <!-- What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so: -->
 
