@@ -26,11 +26,14 @@ generation_time<- function(Amat, Fmat){
   # This uses the Bienvenu and Legendre (Am Nat 2015) definition of generation time.
   # T = lambda*v*w/(v*F*w)
 
-  lambda<- Re(eigen(Amat, only.values = T)$values[1])
-  w<- Re(eigen(Amat)$vectors[,1]) # right eigenvector of the mean matrix
-  v<- Re(eigen(t(Amat))$vectors[,1]) # left eigenvector of the mean matrix
+  eigz<- eigen(Amat) # get eigenvalues and eigenvectors
+  ilambda<- which(Re(eigz$values)==max(Re(eigz$values)))
+  lambda<- max(Re(eigz$values))
+  w<- Re(eigz$vectors[,ilambda]) # right eigenvector of the matrix
+  v<- Re(eigen(t(Amat))$vectors[,ilambda]) # left eigenvector of the matrix
 
   gentime<- lambda*v%*%w/(v%*%Fmat%*%w)
+  return(gentime)
 }
 
 #' R0, the net reproductive output
@@ -58,7 +61,7 @@ generation_time<- function(Amat, Fmat){
 r_nought<- function(Amat, Fmat){
   Umat<- Amat-Fmat
   Nmat<- fundamental_matrix(Umat)
-  R0<- Re(eigen(Fmat%*%Nmat, only.values = T)$values[1])
+  R0<- max(Re(eigen(Fmat%*%Nmat, only.values = T)$values))
   return(R0)
 }
 

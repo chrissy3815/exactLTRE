@@ -190,7 +190,7 @@ lamVar<- function(Aobj, which.fixed=NULL) {
   # held constant at their means)
   for(j in 1:nrow(Mfix)) {
     Mj<- reMat(Mfix,j)
-    lambdas[j]<- Re(eigen(Mj, only.values = T)$values[1])
+    lambdas[j]<- max(Re(eigen(Mj, only.values = T)$values))
   }
   # calculate the variance in lambda
   return(variance_complete(lambdas))
@@ -276,7 +276,7 @@ lamDiff<- function(Aobj, which.fixed=NULL) {
   # held constant at their means)
   for(j in 1:nrow(Mtest)) {
     Mj<- reMat(Mtest,j)
-    lambdas[j]<- Re(eigen(Mj, only.values = T)$values[1])
+    lambdas[j]<- max(Re(eigen(Mj, only.values = T)$values))
   }
   # calculate the difference in lambda as Atest-Aref:
   return(lambdas[2]-lambdas[1])
@@ -364,7 +364,7 @@ lamDiff_symmetric<- function(Aobj, which.fixed=NULL) {
   # held constant at their means)
   for(j in 1:nrow(Mtest)) {
     Mj<- reMat(Mtest,j)
-    lambdas[j]<- Re(eigen(Mj, only.values = T)$values[1])
+    lambdas[j]<- max(Re(eigen(Mj, only.values = T)$values))
   }
   # calculate the difference in lambda as Atest-Aref:
   return(lambdas[2]-lambdas[1])
@@ -603,16 +603,16 @@ run_matrix_checks<- function(Aobj){
 
     # Check 3: Is the matrix ergodic?
     if (popdemo::isErgodic(this_matrix)==FALSE){
-      stop(paste("Matrix", i, "is not ergodic."), call.=FALSE)
+      warning(paste("Matrix", i, "is not ergodic."), call.=FALSE)
     }
 
     # Check 4: is the matrix irreducible?
     if (popdemo::isIrreducible(this_matrix)==FALSE){
-      stop(paste("Matrix", i, "is reducible."), call.=FALSE)
+      warning(paste("Matrix", i, "is reducible."), call.=FALSE)
     }
     # Check 5: is the matrix primitive?
     if (popdemo::isPrimitive(this_matrix)==FALSE){
-      stop(paste("Matrix", i, "is imprimitive."), call.=FALSE)
+      warning(paste("Matrix", i, "is imprimitive."), call.=FALSE)
     }
 
     # Check 5: Check survival sums are not greater than 1.

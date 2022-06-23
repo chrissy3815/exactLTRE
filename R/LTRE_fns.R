@@ -235,8 +235,10 @@ approximateLTRE_fixed<- function(Aref, Atest){
   run_matrix_checks(rbind(as.vector(Aref), as.vector(Atest)))
 
   Amean<- (Atest+Aref)/2 # define the mean matrix
-  wmean<- Re(eigen(Amean)$vectors[,1]) # right eigenvector of the mean matrix
-  vmean<- Re(eigen(t(Amean))$vectors[,1]) # left eigenvector of the mean matrix
+  eigz<- eigen(Amean) # get eigenvalues and eigenvectors
+  ilambda<- which(Re(eigz$values)==max(Re(eigz$values)))
+  wmean<- Re(eigz$vectors[,ilambda]) # right eigenvector of the mean matrix
+  vmean<- Re(eigen(t(Amean))$vectors[,ilambda]) # left eigenvector of the mean matrix
   sensmat<- vmean%*%t(wmean)/as.vector(vmean%*%wmean)
   diffmat<- Atest-Aref
   C_m<- diffmat*sensmat
@@ -303,8 +305,10 @@ approximateLTRE_random<- function(Aobj){
   Amean<- matrix(apply(Aobj,2,mean),sqrt(dim(Aobj)[2]),sqrt(dim(Aobj)[2]))
 
   # calculate the sensitivity, evaluated at the mean matrix:
-  wmean<- Re(eigen(Amean)$vectors[,1]) # right eigenvector of the mean matrix
-  vmean<- Re(eigen(t(Amean))$vectors[,1]) # left eigenvector of the mean matrix
+  eigz<- eigen(Amean) # get eigenvalues and eigenvectors
+  ilambda<- which(Re(eigz$values)==max(Re(eigz$values)))
+  wmean<- Re(eigz$vectors[,ilambda]) # right eigenvector of the mean matrix
+  vmean<- Re(eigen(t(Amean))$vectors[,ilambda]) # left eigenvector of the mean matrix
   sensmat<- vmean%*%t(wmean)/as.vector(vmean%*%wmean)
 
   # calculate contributions according to: Cov(aij,akl)*sij*skl
