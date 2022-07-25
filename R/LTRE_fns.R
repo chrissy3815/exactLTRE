@@ -392,7 +392,7 @@ exactLTRE_random<- function(Aobj, maxint="all"){
   responses<- calc_matrix_responses(Aobj, ind_vary, FUN=lamVar, maxint)
 
   # Calculate the effects or "epsilons," depending on maxint.
-  if (maxint=="all"){ # use Poelwijk approach
+  if (maxint=="all" & length(ind_vary)<=15){ # use Poelwijk approach
 
     Gmatrix<- make.Gmatrix(length(ind_vary)) # order of Gmatrix is the number of parameters that vary
     # calculate the epsilon values:
@@ -531,7 +531,7 @@ exactLTRE_fixed<- function(Aobj, maxint="all", fixed.directional=FALSE){
   }
 
   # Calculate the effects or "epsilons," depending on maxint.
-  if (maxint=="all"){ # use Poelwijk approach
+  if (maxint=="all" & length(ind_vary)<=15){ # use Poelwijk approach
 
     Gmatrix<- make.Gmatrix(length(ind_vary)) # order of Gmatrix is the number of parameters that vary
     # calculate the epsilon values:

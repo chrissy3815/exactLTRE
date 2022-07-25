@@ -4,6 +4,8 @@
 # exactLTRE
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/chrissy3815/exactLTRE/workflows/R-CMD-check/badge.svg)](https://github.com/chrissy3815/exactLTRE/actions)
 <!-- badges: end -->
 
 The goal of exactLTRE is to provide a set of friendly tools to increase
