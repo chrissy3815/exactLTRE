@@ -10,9 +10,9 @@ library(devtools)
 library(Rcompadre)
 
 # Install exactLTRE from github:
-devtools::install_github("chrissy3815/exactLTRE", force=T)
+devtools::install_github("chrissy3815/exactLTRE", force=TRUE)
 # if that doesn't work, try:
-devtools::install_github("chrissy3815/exactLTRE", ref="main", force=T)
+devtools::install_github("chrissy3815/exactLTRE", ref="main", force=TRUE)
 # If that still doesn't work, you can clone the repository from Github and
 # install directly (see here: https://kbroman.org/pkg_primer/pages/build.html)
 
@@ -39,7 +39,7 @@ cont_var<- exactLTRE(list(A1,A2,A3), method='random')
 F1<- matrix(0, nrow=3, ncol=3)
 F1[1,3]<- A1[1,3]
 #F1 is all zeros, except the upper right corner which matches A1 for adult fertility
-T<- generation_time(A1, F1)
+gen_time<- generation_time(A1, F1)
 
 # R0, the expected lifetime reproductive output for an individual
 R0<- r_nought(A1, F1)
@@ -80,10 +80,10 @@ geocrinia[,c("SpeciesAccepted", "OrganismType", "Country", "MatrixPopulation", "
 
 # pull out the two matrices of interest:
 Aobj<- c(matA(comadre[comadre$MatrixID==248239,]),matA(comadre[comadre$MatrixID==248238, ]))
-lapply(Aobj, eigen, only.values=T)
+lapply(Aobj, eigen, only.values=TRUE)
 
 # Evaluate a fixed symmetric design LTRE:
-result<- exactLTRE(Aobj, method='fixed', fixed.directional = F)
+result<- exactLTRE(Aobj, method='fixed', fixed.directional = FALSE)
 result$varying.indices.list
 barplot(t(result$epsilons[2:length(result$epsilons)]),
         names.arg=c("sJ", "f","sJ, f", "sA", "sJ, sA", "f, sA", "sJ, f, sA"), las=2)
@@ -98,8 +98,8 @@ spermophilus[,c("MatrixID", "MatrixPopulation", "MatrixTreatment")]
 spermophilus_mats<- c(matA(spermophilus[spermophilus$MatrixID==249840]), matA(spermophilus[spermophilus$MatrixID==249844]))
 
 # Maybe try running it both ways, and see how the interpretation changes.
-spermophilus_symm<- exactLTRE(spermophilus_mats, method='fixed', maxint=3, fixed.directional = F)
-spermophilus_dir<- exactLTRE(spermophilus_mats, method='fixed', maxint=3, fixed.directional = T)
+spermophilus_symm<- exactLTRE(spermophilus_mats, method='fixed', maxint=3, fixed.directional = FALSE)
+spermophilus_dir<- exactLTRE(spermophilus_mats, method='fixed', maxint=3, fixed.directional = TRUE)
 
 # plot the comparison:
 toplot<- rbind(spermophilus_symm$epsilons, spermophilus_dir$epsilons)
@@ -111,7 +111,7 @@ xlabels<- c("F1", "P1", "F2", "P2", "F3", "P3",
             "F1+F2+P2", "F1+F2+F3", "F1+F2+P3", "F1+P2+F3", "F1+P2+P3",
             "F1+F3+P3", "P1+F2+P2", "P1+F2+F3", "P1+F2+P3", "P1+P2+F3",
             "P1+P2+P3", "P1+F3+P3", "F2+P2+F3", "F2+P2+P3", "F2+F3+P3", "P2+F3+P3")
-barplot(toplot, beside = T, names.arg = xlabels, las=2,
+barplot(toplot, beside = TRUE, names.arg = xlabels, las=2,
         legend=c("Symmetric", "Directional"), args.legend = list(x="topright"),)
 
 #################################################################
