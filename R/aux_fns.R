@@ -196,39 +196,42 @@ lamVar<- function(Aobj, which.fixed=NULL) {
   return(variance_complete(lambdas))
 }
 
-# A function to compute the difference in lambda across a set of matrices, with some parameters fixed at their mean value:
+# A function to compute the difference in lambda across a set of matrices, with some parameters fixed at their baseline value:
 #' Difference in lambda
 #'
 #' In population projection matrices, the eigenvalue with the largest magnitude
-#' is the asymptotic population growth rate, referred to as lambda. This function
-#' calculates the difference in lambda between two population projection
-#' matrices, which must have the same dimensions. This function also has the option
-#' to hold some of the vital rates at the value in the reference
+#' is the asymptotic population growth rate, referred to as lambda. This
+#' function calculates the difference in lambda between two population
+#' projection matrices, which must have the same dimensions. This function also
+#' has the option to hold some of the vital rates at the value in the baseline
 #' matrix. The resulting calculation is the difference in lambda when all the
 #' non-fixed vital rates are varying. For example, if all the vital rates are
 #' held fixed except for adult fertility, then the output is the difference in
 #' lambda due to difference in adult fertility. The difference is taken as
-#' \eqn{reference matrix - test matrix}, and the function assumes that the
-#' provided matrices are ordered \[reference, test\].
+#' \eqn{baseline matrix - observed matrix}, and the function assumes that the
+#' provided matrices are ordered \[baseline, observed\].
 #'
-#' This function differs from \code{lamDiff_symmetric} because it uses the reference
-#' matrix as the baseline. So fixed parameters are set to the values in the
-#' reference matrix. In \code{lamDiff_symmetric}, the fixed parameters would be set
-#' to their mean values.
+#' This function differs from \code{lamDiff_symmetric} because it uses the first
+#' matrix in \code{Aobj} as the baseline matrix. So fixed parameters are set to
+#' the values in the baseline matrix. In \code{lamDiff_symmetric}, the fixed
+#' parameters would be set to their mean values.
 #'
-#' \code{lamDiff} is most appropriate for comparisons between a control and treatment
-#' population in a controlled experiment. \code{lamDiff_symmetric} is more
-#' appropriate for comparisons where it is not entirely obvious which population
-#' should be the reference and which should be the test (for example, when
-#' comparing a wet and a dry year).
+#' \code{lamDiff} is most appropriate for comparisons between a control and
+#' treatment population in a controlled experiment or other settings where one
+#' of the populations can be considered as a standard-of-reference.
+#' \code{lamDiff_symmetric} is more appropriate for comparisons where none of
+#' the population matrices are obviously suitable as a baseline or
+#' standard-of-reference (for example, when comparing a wet and a dry year).
 #'
 #' @param Aobj An object containing the population projection matrices to be
-#'  included in the analysis. It should either be a list, or a matrix where each
-#'  row is the column-wise vectorization of a matrix. Exactly 2 matrices should be
-#'  provided. If more than 2 matrices are provided, the function will assume
-#'  that the first is the reference and the second is the test matrix.
+#'   included in the analysis. It should either be a list, or a matrix where
+#'   each row is the column-wise vectorization of a matrix. Exactly 2 matrices
+#'   should be provided. If more than 2 matrices are provided, the function will
+#'   assume that the first is the baseline and the second is the observed matrix
+#'   to be compared. Matrices beyond the first two will be ignored.
+#'
 #' @param which.fixed The column-wise indices (single-value index) of the vital
-#' rates to be held at their mean values across the matrices in \code{Aobj}.
+#' rates to be held at their baseline values across the matrices in \code{Aobj}.
 #'
 #' @return A single value for the difference in lambda.
 #' @export
@@ -236,18 +239,19 @@ lamVar<- function(Aobj, which.fixed=NULL) {
 #' @seealso \code{\link{lamDiff_symmetric}} \code{\link{lamVar}}
 #'
 #' @examples
-#' Aref<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
-#' Atest<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
-#' A_all<- list(Aref,Atest)
+#' Abaseline<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' Aobserved<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+#' A_all<- list(Abaseline,Aobserved)
 #' diff_all_vary<- lamDiff(A_all)
 #' diff_fert_vary<- lamDiff(A_all, which.fixed=c(2,6,9))
 lamDiff<- function(Aobj, which.fixed=NULL) {
-  # Aobj can either be a list of matrices, where Aobj[[1]] is Aref and Aobj[[2]] is Atest
-  # or have 2 rows that are the vec(Aref) and vec(Atest)
+  # Aobj can either be a list of matrices, where Aobj[[1]] is Abaseline and
+  # Aobj[[2]] is Aobserved or have 2 rows that are the vec(Abaseline) and
+  # vec(Aobserved)
 
   if (is.list(Aobj)){
     if (length(Aobj)>2){
-      warning("Aobj contains more than 2 matrices. lamDiff assumes Aobj[[1]] is Aref and Aobj[[2]] is Atest.")
+      warning("Aobj contains more than 2 matrices. lamDiff assumes Aobj[[1]] is Abaseline and Aobj[[2]] is Aobserved.")
     }
     else if (length(Aobj)<2){
       stop("Aobj contains fewer than 2 matrices, so we cannot compute the difference in lambda.")
@@ -256,7 +260,7 @@ lamDiff<- function(Aobj, which.fixed=NULL) {
     Mtest<- Aobj # make a copy so that we can do which.fixed and then calculate lambda's
   } else { # if Aobj isn't a list, then we assume it's a matrix.
     if (dim(Aobj)[1]>2){
-      warning("Aobj contains more than 2 matrices. lamDiff assumes Aobj[1,] is vec(Aref) and Aobj[2,] is vec(Atest).")
+      warning("Aobj contains more than 2 matrices. lamDiff assumes Aobj[1,] is vec(Abaseline) and Aobj[2,] is vec(Aobserved).")
     } else if (dim(Aobj)[1]<2){
       stop("Aobj contains fewer than 2 matrices, so we cannot compute the difference in lambda.")
     }
@@ -264,7 +268,7 @@ lamDiff<- function(Aobj, which.fixed=NULL) {
   }
 
   # for each of the parameters to be held fixed, set it equal to the corresponding
-  # value in the reference matrix
+  # value in the baseline matrix
   if (length(which.fixed)>0){
     for(j in which.fixed) {
       Mtest[2,j]<- Aobj[1,j]
@@ -278,40 +282,42 @@ lamDiff<- function(Aobj, which.fixed=NULL) {
     Mj<- reMat(Mtest,j)
     lambdas[j]<- max(Re(eigen(Mj, only.values = T)$values))
   }
-  # calculate the difference in lambda as Atest-Aref:
+  # calculate the difference in lambda as Aobserved-Abaseline:
   return(lambdas[2]-lambdas[1])
 }
 
-#' Difference in lambda, with a mean baseline
+#' Difference in lambda, with the mean as baseline
 #'
 #' In population projection matrices, the eigenvalue with the largest magnitude
-#' is the asymptotic population growth rate, referred to as lambda. This function
-#' calculates the difference in lambda between two population projection
-#' matrices, which must have the same dimensions. This function also has the option
-#' to hold some of the vital rates at their mean values across the provided
-#' matrices. The resulting calculation is the difference in lambda when all the
-#' non-fixed vital rates are varying. For example, if all the vital rates are
-#' held fixed except for adult fertility, then the output is the difference in
-#' lambda due to difference in adult fertility. The difference is taken as
-#' \eqn{reference matrix - test matrix}, and the function assumes that the
-#' provided matrices are ordered \[reference, test\].
+#' is the asymptotic population growth rate, referred to as lambda. This
+#' function calculates the difference in lambda between two population
+#' projection matrices, which must have the same dimensions. This function also
+#' has the option to hold some of the vital rates at their mean values across
+#' the provided matrices. The resulting calculation is the difference in lambda
+#' when all the non-fixed vital rates are varying. For example, if all the vital
+#' rates are held fixed except for adult fertility, then the output is the
+#' difference in lambda due to difference in adult fertility. The difference is
+#' taken as \eqn{observed matrix 1 - observed matrix 2}, where the provided
+#' matrices are ordered \[observed matrix 1, observed matrix 2\].
 #'
 #' This function differs from \code{lamDiff} because it uses the mean
 #' matrix as the baseline. So fixed parameters are set to their mean values. In
 #' \code{lamDiff}, the fixed parameters would be set to their respective values
-#' given by the reference matrix.
+#' given by the baseline matrix.
 #'
-#' \code{lamDiff} is most appropriate for comparisons between a control and treatment
-#' population in a controlled experiment. \code{lamDiff_symmetric} is more
-#' appropriate for comparisons where it is not entirely obvious which population
-#' should be the reference and which should be the test (for example, when
-#' comparing a wet and a dry year).
+#' \code{lamDiff} is most appropriate for comparisons between a control and
+#' treatment population in a controlled experiment or other settings where one
+#' of the populations can be considered as a standard-of-reference.
+#' \code{lamDiff_symmetric} is more appropriate for comparisons where none of
+#' the population matrices are obviously suitable as a baseline or
+#' standard-of-reference (for example, when comparing a wet and a dry year).
 #'
 #' @param Aobj An object containing the population projection matrices to be
-#'  included in the analysis. It should either be a list, or a matrix where each
-#'  row is the column-wise vectorization of a matrix. Exactly 2 matrices should be
-#'  provided. If more than 2 matrices are provided, the function will assume
-#'  that the first is the reference and the second is the test matrix.
+#'   included in the analysis. It should either be a list, or a matrix where
+#'   each row is the column-wise vectorization of a matrix. Exactly 2 matrices
+#'   should be provided. If more than 2 matrices are provided, the function will
+#'   only use the first two.
+#'
 #' @param which.fixed The column-wise indices (single-value index) of the vital
 #' rates to be held at their mean values across the matrices in \code{Aobj}.
 #'
@@ -321,18 +327,18 @@ lamDiff<- function(Aobj, which.fixed=NULL) {
 #' @seealso \code{\link{lamDiff}} \code{\link{lamVar}}
 #'
 #' @examples
-#' Aref<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
-#' Atest<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
-#' A_all<- list(Aref,Atest)
+#' Aobs1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
+#' Aobs2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
+#' A_all<- list(Aobs1,Aobs2)
 #' diff_all_vary<- lamDiff_symmetric(A_all)
 #' diff_fert_vary<- lamDiff_symmetric(A_all, which.fixed=c(2,6,9))
 lamDiff_symmetric<- function(Aobj, which.fixed=NULL) {
-  # Aobj can either be a list of matrices, where Aobj[[1]] is Aref and Aobj[[2]] is Atest
-  # or have 2 rows that are the vec(Aref) and vec(Atest)
+  # Aobj can either be a list of matrices, where Aobj[[1]] is Aobs1 and Aobj[[2]] is Aobs2
+  # or have 2 rows that are the vec(Aobs1) and vec(Aobs2)
 
   if (is.list(Aobj)){
     if (length(Aobj)>2){
-      warning("Aobj contains more than 2 matrices. lamDiff assumes Aobj[[1]] is Aref and Aobj[[2]] is Atest.")
+      warning("Aobj contains more than 2 matrices. lamDiff will compare the first two, and disregard the rest.")
     }
     else if (length(Aobj)<2){
       stop("Aobj contains fewer than 2 matrices, so we cannot compute the difference in lambda.")
@@ -342,7 +348,7 @@ lamDiff_symmetric<- function(Aobj, which.fixed=NULL) {
     Amean<- mean_matrix(Aobj)
   } else { # if Aobj isn't a list, then we assume it's a matrix.
     if (dim(Aobj)[1]>2){
-      warning("Aobj contains more than 2 matrices. lamDiff assumes Aobj[1,] is vec(Aref) and Aobj[2,] is vec(Atest).")
+      warning("Aobj contains more than 2 matrices. lamDiff will compare the first two, and disregard the rest.")
     } else if (dim(Aobj)[1]<2){
       stop("Aobj contains fewer than 2 matrices, so we cannot compute the difference in lambda.")
     }
@@ -366,7 +372,7 @@ lamDiff_symmetric<- function(Aobj, which.fixed=NULL) {
     Mj<- reMat(Mtest,j)
     lambdas[j]<- max(Re(eigen(Mj, only.values = T)$values))
   }
-  # calculate the difference in lambda as Atest-Aref:
+  # calculate the difference in lambda as Aobs2-Aobs1:
   return(lambdas[2]-lambdas[1])
 }
 

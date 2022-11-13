@@ -1,65 +1,69 @@
 ## Main LTRE functions
 
 
-# a wrapper function for approximate LTRE:
-#' Approximate LTRE analysis
+# a wrapper function for classical LTRE:
+#' Classical LTRE analysis
 #'
 #' Life Table Response Experiments (LTREs) are a method of comparative demographic
 #' analysis. The purpose is to quantify how the difference or variance in vital
 #' rates (stage-specific survival, growth, and fertility) amongst populations
 #' contributes to difference or variance in the population growth rate, "lambda."
-#' The equations and descriptions for the approximate methods of LTRE analysis
-#' can be found in Caswell's 2001 textbook.
+#' The equations and descriptions for the classical methods of LTRE analysis
+#' can be found in Caswell's 2001 textbook. The function we provide here can
+#' perform a one-way fixed design LTRE, or a random design LTRE.
 #'
 #' @param Aobj An object containing all the population projection matrices to be
 #'  included in the analysis. It should either be a list, or a matrix where each
 #'   row is the column-wise vectorization of a matrix.
 #'
-#'  For fixed design, exactly 2 matrices must be provided, ordered as
-#'  `[reference matrix, test matrix`]. For random design, any set of 2 or more
-#'  matrices can be provided. The set of matrices passed in must all have the
-#'  same dimensions.
+#'  For one-way fixed design, exactly 2 matrices must be provided, ordered as
+#'  `[reference matrix, treatment matrix`]. For random design, any set of 2 or
+#'  more matrices can be provided. The set of matrices passed in to this
+#'  function must all have the same dimensions.
 #'
 #' @param method Either "random" or "fixed." The default behavior is "random."
 #' See details for more information.
 #'
 #' @return A matrix of contributions to variance (random design) or difference
-#' (fixed design) in lambda. Lambda is the asymptotic population growth rate,
-#' defined as the largest eigenvalue of the population projection matrix.
+#' (one-way fixed design) in lambda. Lambda is the asymptotic population growth
+#' rate, defined as the largest eigenvalue of the population projection matrix.
 #'
 #' @export
 #'
 #'@details  Lambda is the asymptotic population growth rate, defined as the
-#'  largest eigenvalue of the population projection matrix. A fixed design LTRE
-#'  decomposes the difference in lambda due to differences at each position of
-#'  the matrices. For a fixed design LTRE, exactly 2 matrices must be provided,
-#'  ordered as `[reference matrix, test matrix`]. The matrix of contributions
-#'  returned from a approximate method fixed design LTRE will have the same shape
-#'  as the provided matrices.
+#'  largest eigenvalue of the population projection matrix. A one-way fixed
+#'  design LTRE decomposes the difference in lambda due to differences at each
+#'  position of the matrices. It should be used when the particular treatment
+#'  levels are of interest. For a one-way fixed design LTRE, exactly 2 matrices
+#'  must be provided, ordered as `[reference matrix, treatment matrix`]. The
+#'  matrix of contributions returned from a classical method fixed design LTRE
+#'  will have the same shape as the provided matrices.
 #'
 #'  A random design LTRE decomposes the variance in lambda due to variance and
-#'  covariance in the entries at each position in the matrices. For a random
-#'  design LTRE, at least 2 matrices must be provided. The matrix of
-#'  contributions returned from a approximate method random design LTRE will
-#'  include both first-order terms (due to variance) and interaction terms (due
-#'  to covariance). Therefore, if the provided matrix is 3x3, the matrix of
-#'  contributions will be 9x9 (the size of the variance-covariance matrix is the
-#'  square of the size of the original matrix). The contributions of variances
-#'  are found on the diagonal of the contribution matrix, and the contributions
-#'  of covariances are symmetric. So the contribution of covariance between two
-#'  vital rate parameters is the sum of the two corresponding off-diagonal terms.
+#'  covariance in the entries at each position in the matrices. It assumes that
+#'  the matrices being analyzed come from a population of similar matrices,
+#'  without the particular treatment levels or population conditions being of
+#'  interest per se. For a random design LTRE, at least 2 matrices must be
+#'  provided. The matrix of contributions returned from a classical method
+#'  random design LTRE will include both first-order terms (due to variance) and
+#'  interaction terms (due to covariance). Therefore, if the provided matrix is
+#'  3x3, the matrix of contributions will be 9x9 (the size of the
+#'  variance-covariance matrix is the square of the size of the original
+#'  matrix). The contributions of variances are found on the diagonal of the
+#'  contribution matrix, and the contributions of covariances are symmetric. So
+#'  the contribution of covariance between two vital rate parameters is the sum
+#'  of the two corresponding off-diagonal terms.
 #'
-#'  The equations and descriptions for the approximate methods of LTRE analysis
+#'  The equations and descriptions for the classical methods of LTRE analysis
 #'  can be found in Caswell's 2001 textbook.
 #'
 #' @examples
 #' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
 #' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
 #' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
-#' cont_diff<- approximateLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
-#' # contributions to the variance of lambda
-#' cont_var<- approximateLTRE(list(A1,A2,A3), method='random')
-approximateLTRE<- function(Aobj, method="random"){
+#' cont_diff<- classicalLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
+#' cont_var<- classicalLTRE(list(A1,A2,A3), method='random') # contributions to the variance of lambda
+classicalLTRE<- function(Aobj, method="random"){
 
   # if Aobj is passed in as a list, collapse into the row-format:
   if (is.list(Aobj)){
@@ -67,12 +71,12 @@ approximateLTRE<- function(Aobj, method="random"){
   }
 
   if (method=="random"){
-    output<- approximateLTRE_random(Aobj)
+    output<- classicalLTRE_random(Aobj)
   } else if (method=="fixed"){
-    # For fixed LTRE, it is important that Aobj is 2 rows. Row 1 contains vec(Aref), and Row 2 contains vec(Atest)
+    # For fixed LTRE, it is important that Aobj is 2 rows. Row 1 contains vec(Aref), and Row 2 contains vec(Atreatment)
     Aref<- reMat(Aobj,1)
-    Atest<- reMat(Aobj,2)
-    output<- approximateLTRE_fixed(Aref, Atest)
+    Atreatment<- reMat(Aobj,2)
+    output<- classicalLTRE_fixed(Aref, Atreatment)
   }
   return(output)
 }
@@ -92,10 +96,12 @@ approximateLTRE<- function(Aobj, method="random"){
 #'  included in the analysis. It should either be a list, or a matrix where each
 #'   row is the column-wise vectorization of a matrix.
 #'
-#'  For fixed design, exactly 2 matrices must be provided, ordered as
-#'  `[reference matrix, test matrix`]. For random design, any set of 2 or more
-#'  matrices can be provided. The set of matrices passed in must all have the
-#'  same dimensions.
+#'  For one-way fixed design, exactly 2 matrices must be provided. For a
+#'  "directional" analyses, one of the provided matrices will serve as the
+#'  baseline state (for example, a control or standard-of-reference). In this
+#'  case, the matrices need to be ordered as `[baseline matrix, observed matrix`].
+#'  For random design, any set of 2 or more matrices can be provided.
+#'  The set of matrices passed in must all have the same dimensions.
 #'
 #' @param method Either "random" or "fixed." The default behavior is "random."
 #' See details for more information.
@@ -106,8 +112,8 @@ approximateLTRE<- function(Aobj, method="random"){
 #'
 #' @param fixed.directional A true/false switch that allows the user to specify
 #' whether a directional LTRE should be used. The default behavior is to calculate
-#' a symmetric LTRE, where the mean matrix is used as the baseline. See details
-#' for more guidance.
+#' a symmetric LTRE, where the mean matrix is used as the baseline matrix. See
+#' details for more guidance.
 #'
 #' @return This returns a list object, with 3 items: (1) a vector of the matrix
 #' indices where the parameters vary between/among the matrices in Aobj; (2) a
@@ -127,35 +133,52 @@ approximateLTRE<- function(Aobj, method="random"){
 #'
 #'  `epsilon` is a vector of contributions to the variance or difference in
 #'  lambda due to the observed values of the various life history parameters.
-#'  For example, the contribution to the variance in lambda of adult survival is
+#'  For example, the contribution of adult survival to the Var(lambda) is
 #'  determined by setting all parameters *except* adult survival to their mean
-#'  values, and then calculating the variance in lambda in this manipulated set
-#'  of matrices.
+#'  values, and then calculating the variance of lambda across this manipulated
+#'  set of matrices.
 #'
 #' @details  Lambda is the asymptotic population growth rate, defined as the
-#'  largest eigenvalue of the population projection matrix. A fixed design LTRE
-#'  decomposes the difference in lambda due to differences at each position of
-#'  the matrices. For a fixed design LTRE, exactly 2 matrices must be provided,
-#'  ordered as `[reference matrix, test matrix`].
+#'  largest eigenvalue of the population projection matrix.
 #'
-#'  A random design LTRE decomposes the variance in lambda due to variance and
-#'  covariance in the entries at each position in the matrices. For a random
-#'  design LTRE, at least 2 matrices must be provided.
+#'  In a one-way fixed design LTRE, the particular treatment levels or
+#'  conditions faced by a population are of interest, so one-way fixed design
+#'  LTRE decomposes the difference in lambda due to differences at each position
+#'  of the matrices. For a fixed design LTRE, exactly 2 matrices must be
+#'  provided.
 #'
-#'  \code{fixed.directional=FALSE} is most appropriate for comparisons where it is
-#'  not entirely obvious which population should be the reference and which
-#'  should be the test (for example, when comparing a wet and a dry year). In
+#'  A random design LTRE treats the different matrices being compared as random
+#'  samples from a set of population conditions, without specific focus on the
+#'  treatments or conditions that each population experienced. This analysis
+#'  decomposes the variance in lambda due to variance and covariance in the
+#'  entries at each position in the matrices. For a random design LTRE, at least
+#'  2 matrices must be provided.
+#'
+#'  \code{fixed.directional=FALSE} is most appropriate for comparisons where
+#'  none of the matrices are appropriate for use as a baseline or
+#'  standard-of-reference. For example, if we want to ask which vital rates
+#'  drive the difference in population growth rate for two populations of fish
+#'  in separate but similar lakes, we want to use a *symmetric* analysis. In
 #'  this case, the difference in lambda is decomposed using the mean matrix as
-#'  the baseline. The decomposition is symmetric, meaning that if the test and
-#'  reference matrix are swapped, the contributions from the vital rates will be
-#'  equal in magnitude, but positive contributions will become negative and vice
-#'  versa.
+#'  the baseline. The decomposition is symmetric, meaning that if the treatment
+#'  and reference matrix are swapped, the contributions from the vital rates
+#'  will be equal in magnitude, but positive contributions will become negative
+#'  and vice versa. In this case, it does not matter which order you provide the
+#'  matrices in \code{Aobj}, but interpretation will require that you pay
+#'  attention to the fact that the sum of contributions will be equal to the
+#'  observed difference in lambda between the two matrices in \code{Aobj},
+#'  evaluated as lambda(A1) - lambda(A2).
 #'
 #'  \code{fixed.directional=TRUE} is most appropriate for comparisons between a
-#'  control and treatment population in a controlled experiment. In this case,
-#'  the reference matrix is treated as the baseline. This is a directional analysis,
-#'  meaning that if the reference and test matrices were to be swapped, the
-#'  contributions of the vital rates would change.
+#'  control and treatment population in a controlled experiment, or for other
+#'  cases where one of the populations can serve as a standard of reference (for
+#'  example, the lowest elevation population, or one near the range center). In
+#'  this case, the first matrix in \code{Aobj} is used as the baseline. This is
+#'  a directional analysis, meaning that if the order in which the two matrices
+#'  are provided were to be swapped (switching the baseline matrix and other
+#'  observed matrix), the contributions of the vital rates would change. If you
+#'  choose a directional analysis, be sure to provide the matrices in
+#'  \code{Aobj} ordered as `[baseline matrix, observed matrix`].
 #'
 #'  We set \code{fixed.directional=FALSE} as the default behavior because most
 #'  population projection models are built with field-collected data rather than
@@ -186,20 +209,20 @@ exactLTRE<- function(Aobj, method="random", maxint="all", fixed.directional=FALS
 }
 
 
-#' Approximate LTRE analysis: fixed design
+#' Classical LTRE analysis: one-way fixed design
 #'
-#  Life Table Response Experiments (LTREs) are a method of comparative demographic
+#' Life Table Response Experiments (LTREs) are a method of comparative demographic
 #' analysis. The purpose is to quantify how the difference or variance in vital
-#' rates (stage-specific survival, growth, and fertility) amongst populations
-#' contributes to difference or variance in the population growth rate, "lambda."
-#' The equations and descriptions for the approximate methods of LTRE analysis
-#' can be found in Caswell's 2001 textbook.
+#' rates (stage-specific survival, growth, and fertility) amongst populations '
+#' contributes to the difference or variance in the population growth rate,
+#' "lambda." ' The equations and descriptions for the classical methods of LTRE
+#' analysis ' can be found in Caswell's 2001 textbook.
 #'
 #' @param Aref The population projection matrix of the reference population.
 #' Depending on the experimental or observational dataset, this may be the
-#' control treatment, the first time period, or the unharvested population, etc.
+#' control treatment, the first time period, the unharvested population, etc.
 #'
-#' @param Atest The population projection matrix of the test population.
+#' @param Atreatment The population projection matrix of a treatment population.
 #'
 #' @return A matrix of contributions to the difference in lambda. Lambda is the
 #' asymptotic population growth rate, defined as the largest eigenvalue of the
@@ -211,47 +234,47 @@ exactLTRE<- function(Aobj, method="random", maxint="all", fixed.directional=FALS
 #'  largest eigenvalue of the population projection matrix. A fixed design LTRE
 #'  decomposes the difference in lambda due to differences at each position of
 #'  the matrices. For a fixed design LTRE, exactly 2 matrices must be provided,
-#'  ordered as `[reference matrix, test matrix`]. The matrix of contributions
-#'  returned from an approximate method fixed design LTRE will have the same shape
+#'  ordered as `[reference matrix, treatment matrix`]. The matrix of contributions
+#'  returned from a classical method fixed design LTRE will have the same shape
 #'  as the provided matrices.
 #'
 #'  In some cases, it may not be obvious how to identify the reference and the
-#'  test matrix. The sum of contributions will be approximately equal to the
+#'  treatment matrix. The sum of contributions will be approximately equal to the
 #'  observed difference in lambda between these two matrices, evaluated as
-#'  lambda(Atest) - lambda(Aref). In cases where it doesn't 'matter' which way
+#'  lambda(Atreatment) - lambda(Aref). In cases where it doesn't 'matter' which way
 #'  you, as a user, input these matrices, it is important to understand how to
 #'  interpret positive and negative contributions.
 #'
-#'  The equations and descriptions for the approximate methods of LTRE analysis
+#'  The equations and descriptions for the classical methods of LTRE analysis
 #'  can be found in Caswell's 2001 textbook.
 #'
 #' @examples
 #' A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
 #' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
-#' cont_diff<- approximateLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
-approximateLTRE_fixed<- function(Aref, Atest){
+#' cont_diff<- classicalLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
+classicalLTRE_fixed<- function(Aref, Atreatment){
 
   # run some matrix checks and return warnings as needed:
-  run_matrix_checks(rbind(as.vector(Aref), as.vector(Atest)))
+  run_matrix_checks(rbind(as.vector(Aref), as.vector(Atreatment)))
 
-  Amean<- (Atest+Aref)/2 # define the mean matrix
+  Amean<- (Atreatment+Aref)/2 # define the mean matrix
   eigz<- eigen(Amean) # get eigenvalues and eigenvectors
   ilambda<- which(Re(eigz$values)==max(Re(eigz$values)))
   wmean<- Re(eigz$vectors[,ilambda]) # right eigenvector of the mean matrix
   vmean<- Re(eigen(t(Amean))$vectors[,ilambda]) # left eigenvector of the mean matrix
   sensmat<- vmean%*%t(wmean)/as.vector(vmean%*%wmean)
-  diffmat<- Atest-Aref
+  diffmat<- Atreatment-Aref
   C_m<- diffmat*sensmat
   return(C_m)
 }
 
-#' Approximate LTRE analysis: random design
+#' Classical LTRE analysis: random design
 #'
 #' Life Table Response Experiments (LTREs) are a method of comparative demographic
 #' analysis. The purpose is to quantify how the difference or variance in vital
 #' rates (stage-specific survival, growth, and fertility) amongst populations
-#' contributes to difference or variance in the population growth rate, "lambda."
-#' The equations and descriptions for the approximate methods of LTRE analysis
+#' contributes to the difference or variance in the population growth rate, "lambda."
+#' The equations and descriptions for the classical methods of LTRE analysis
 #' can be found in Caswell's 2001 textbook.
 #'
 #' @param Aobj An object containing all the population projection matrices to be
@@ -270,7 +293,7 @@ approximateLTRE_fixed<- function(Aref, Atest){
 #'  A random design LTRE decomposes the variance in lambda due to variance and
 #'  covariance in the entries at each position in the matrices. For a random
 #'  design LTRE, at least 2 matrices must be provided. The matrix of
-#'  contributions returned from an approximate method random design LTRE will
+#'  contributions returned from a classical method random design LTRE will
 #'  include both first-order terms (due to variance) and interaction terms (due
 #'  to covariance). Therefore, if the provided matrix is 3x3, the matrix of
 #'  contributions will be 9x9 (the size of the variance-covariance matrix is the
@@ -279,7 +302,7 @@ approximateLTRE_fixed<- function(Aref, Atest){
 #'  of covariances are symmetric. So the contribution of covariance between two
 #'  vital rate parameters is the sum of the two corresponding off-diagonal terms.
 #'
-#'  The equations and descriptions for the approximate methods of LTRE analysis
+#'  The equations and descriptions for the classical methods of LTRE analysis
 #'  can be found in Caswell's 2001 textbook.
 #'
 #' @examples
@@ -287,8 +310,8 @@ approximateLTRE_fixed<- function(Aref, Atest){
 #' A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
 #' A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
 #' # contributions to the variance of lambda
-#' cont_var<- approximateLTRE(list(A1,A2,A3), method='random')
-approximateLTRE_random<- function(Aobj){
+#' cont_var<- classicalLTRE(list(A1,A2,A3), method='random')
+classicalLTRE_random<- function(Aobj){
   # each row of Aobj should be the elements of an individual population matrix, collapsed column-wise
   # if Aobj is passed in as a list, collapse into the row-format:
   if (is.list(Aobj)){
@@ -425,7 +448,7 @@ exactLTRE_random<- function(Aobj, maxint="all"){
 #' @param Aobj An object containing all the population projection matrices to be
 #'  included in the analysis. It should either be a list, or a matrix where each
 #'  row is the column-wise vectorization of a matrix. For fixed design, exactly
-#'  2 matrices must be provided, ordered as `[reference matrix, test matrix`].
+#'  2 matrices must be provided, ordered as `[reference matrix, treatment matrix`].
 #'
 #' @param maxint The maximum interaction order to be evaluated. The default input
 #' is "all" but this input can take any integer value. If maxint=3, then the
@@ -462,13 +485,13 @@ exactLTRE_random<- function(Aobj, maxint="all"){
 #'  largest eigenvalue of the population projection matrix. A fixed design LTRE
 #'  decomposes the difference in lambda due to differences at each position of
 #'  the matrices. For a fixed design LTRE, exactly 2 matrices must be provided,
-#'  ordered as `[reference matrix, test matrix`].
+#'  ordered as `[reference matrix, treatment matrix`].
 #'
 #'  \code{fixed.directional=FALSE} is most appropriate for comparisons where it is
 #'  not entirely obvious which population should be the reference and which
-#'  should be the test (for example, when comparing a wet and a dry year). In
+#'  should be the treatment (for example, when comparing a wet and a dry year). In
 #'  this case, the difference in lambda is decomposed using the mean matrix as
-#'  the baseline. The decomposition is symmetric, meaning that if the test and
+#'  the baseline. The decomposition is symmetric, meaning that if the treatment and
 #'  reference matrix are swapped, the contributions from the vital rates will be
 #'  equal in magnitude, but positive contributions will become negative and vice
 #'  versa.
@@ -476,7 +499,7 @@ exactLTRE_random<- function(Aobj, maxint="all"){
 #'  \code{fixed.directional=TRUE} is most appropriate for comparisons between a
 #'  control and treatment population in a controlled experiment. In this case,
 #'  the reference matrix is treated as the baseline. This is a directional analysis,
-#'  meaning that if the reference and test matrices were to be swapped, the
+#'  meaning that if the reference and treatment matrices were to be swapped, the
 #'  contributions of the vital rates would change.
 #'
 #'  We set \code{fixed.directional=FALSE} as the default behavior because most
@@ -496,7 +519,7 @@ exactLTRE_random<- function(Aobj, maxint="all"){
 #' cont_diff<- exactLTRE_fixed(list(A1,A2), maxint="all", fixed.directional=TRUE)
 exactLTRE_fixed<- function(Aobj, maxint="all", fixed.directional=FALSE){
   # each row of Aobj should be the elements of an individual population matrix, collapsed column-wise
-  # It is important that Aobj is 2 rows. Row 1 contains vec(Aref), and Row 2 contains vec(Atest)
+  # It is important that Aobj is 2 rows. Row 1 contains vec(Aref), and Row 2 contains vec(Atreatment)
 
   # if Aobj is passed in as a list, collapse into the row-format:
   if (is.list(Aobj)){

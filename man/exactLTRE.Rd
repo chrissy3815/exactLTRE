@@ -11,10 +11,12 @@ exactLTRE(Aobj, method = "random", maxint = "all", fixed.directional = FALSE)
 included in the analysis. It should either be a list, or a matrix where each
 row is the column-wise vectorization of a matrix.
 
-For fixed design, exactly 2 matrices must be provided, ordered as
-\verb{[reference matrix, test matrix}]. For random design, any set of 2 or more
-matrices can be provided. The set of matrices passed in must all have the
-same dimensions.}
+For one-way fixed design, exactly 2 matrices must be provided. For a
+"directional" analyses, one of the provided matrices will serve as the
+baseline state (for example, a control or standard-of-reference). In this
+case, the matrices need to be ordered as \verb{[baseline matrix, observed matrix}].
+For random design, any set of 2 or more matrices can be provided.
+The set of matrices passed in must all have the same dimensions.}
 
 \item{method}{Either "random" or "fixed." The default behavior is "random."
 See details for more information.}
@@ -25,8 +27,8 @@ output will include contributions terms up to 3-way interactions.}
 
 \item{fixed.directional}{A true/false switch that allows the user to specify
 whether a directional LTRE should be used. The default behavior is to calculate
-a symmetric LTRE, where the mean matrix is used as the baseline. See details
-for more guidance.}
+a symmetric LTRE, where the mean matrix is used as the baseline matrix. See
+details for more guidance.}
 }
 \value{
 This returns a list object, with 3 items: (1) a vector of the matrix
@@ -47,10 +49,10 @@ that differed or varied for the corresponding entry in the \code{epsilon} vector
 
 \code{epsilon} is a vector of contributions to the variance or difference in
 lambda due to the observed values of the various life history parameters.
-For example, the contribution to the variance in lambda of adult survival is
+For example, the contribution of adult survival to the Var(lambda) is
 determined by setting all parameters \emph{except} adult survival to their mean
-values, and then calculating the variance in lambda in this manipulated set
-of matrices.
+values, and then calculating the variance of lambda across this manipulated
+set of matrices.
 }
 \description{
 Life Table Response Experiments (LTREs) are a method of comparative demographic
@@ -63,29 +65,46 @@ forthcoming paper, which we will link to.
 }
 \details{
 Lambda is the asymptotic population growth rate, defined as the
-largest eigenvalue of the population projection matrix. A fixed design LTRE
-decomposes the difference in lambda due to differences at each position of
-the matrices. For a fixed design LTRE, exactly 2 matrices must be provided,
-ordered as \verb{[reference matrix, test matrix}].
+largest eigenvalue of the population projection matrix.
 
-A random design LTRE decomposes the variance in lambda due to variance and
-covariance in the entries at each position in the matrices. For a random
-design LTRE, at least 2 matrices must be provided.
+In a one-way fixed design LTRE, the particular treatment levels or
+conditions faced by a population are of interest, so one-way fixed design
+LTRE decomposes the difference in lambda due to differences at each position
+of the matrices. For a fixed design LTRE, exactly 2 matrices must be
+provided.
 
-\code{fixed.directional=FALSE} is most appropriate for comparisons where it is
-not entirely obvious which population should be the reference and which
-should be the test (for example, when comparing a wet and a dry year). In
+A random design LTRE treats the different matrices being compared as random
+samples from a set of population conditions, without specific focus on the
+treatments or conditions that each population experienced. This analysis
+decomposes the variance in lambda due to variance and covariance in the
+entries at each position in the matrices. For a random design LTRE, at least
+2 matrices must be provided.
+
+\code{fixed.directional=FALSE} is most appropriate for comparisons where
+none of the matrices are appropriate for use as a baseline or
+standard-of-reference. For example, if we want to ask which vital rates
+drive the difference in population growth rate for two populations of fish
+in separate but similar lakes, we want to use a \emph{symmetric} analysis. In
 this case, the difference in lambda is decomposed using the mean matrix as
-the baseline. The decomposition is symmetric, meaning that if the test and
-reference matrix are swapped, the contributions from the vital rates will be
-equal in magnitude, but positive contributions will become negative and vice
-versa.
+the baseline. The decomposition is symmetric, meaning that if the treatment
+and reference matrix are swapped, the contributions from the vital rates
+will be equal in magnitude, but positive contributions will become negative
+and vice versa. In this case, it does not matter which order you provide the
+matrices in \code{Aobj}, but interpretation will require that you pay
+attention to the fact that the sum of contributions will be equal to the
+observed difference in lambda between the two matrices in \code{Aobj},
+evaluated as lambda(A1) - lambda(A2).
 
 \code{fixed.directional=TRUE} is most appropriate for comparisons between a
-control and treatment population in a controlled experiment. In this case,
-the reference matrix is treated as the baseline. This is a directional analysis,
-meaning that if the reference and test matrices were to be swapped, the
-contributions of the vital rates would change.
+control and treatment population in a controlled experiment, or for other
+cases where one of the populations can serve as a standard of reference (for
+example, the lowest elevation population, or one near the range center). In
+this case, the first matrix in \code{Aobj} is used as the baseline. This is
+a directional analysis, meaning that if the order in which the two matrices
+are provided were to be swapped (switching the baseline matrix and other
+observed matrix), the contributions of the vital rates would change. If you
+choose a directional analysis, be sure to provide the matrices in
+\code{Aobj} ordered as \verb{[baseline matrix, observed matrix}].
 
 We set \code{fixed.directional=FALSE} as the default behavior because most
 population projection models are built with field-collected data rather than

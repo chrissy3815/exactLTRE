@@ -10,7 +10,7 @@ exactLTRE_fixed(Aobj, maxint = "all", fixed.directional = FALSE)
 \item{Aobj}{An object containing all the population projection matrices to be
 included in the analysis. It should either be a list, or a matrix where each
 row is the column-wise vectorization of a matrix. For fixed design, exactly
-2 matrices must be provided, ordered as \verb{[reference matrix, test matrix}].}
+2 matrices must be provided, ordered as \verb{[reference matrix, treatment matrix}].}
 
 \item{maxint}{The maximum interaction order to be evaluated. The default input
 is "all" but this input can take any integer value. If maxint=3, then the
@@ -58,13 +58,13 @@ Lambda is the asymptotic population growth rate, defined as the
 largest eigenvalue of the population projection matrix. A fixed design LTRE
 decomposes the difference in lambda due to differences at each position of
 the matrices. For a fixed design LTRE, exactly 2 matrices must be provided,
-ordered as \verb{[reference matrix, test matrix}].
+ordered as \verb{[reference matrix, treatment matrix}].
 
 \code{fixed.directional=FALSE} is most appropriate for comparisons where it is
 not entirely obvious which population should be the reference and which
-should be the test (for example, when comparing a wet and a dry year). In
+should be the treatment (for example, when comparing a wet and a dry year). In
 this case, the difference in lambda is decomposed using the mean matrix as
-the baseline. The decomposition is symmetric, meaning that if the test and
+the baseline. The decomposition is symmetric, meaning that if the treatment and
 reference matrix are swapped, the contributions from the vital rates will be
 equal in magnitude, but positive contributions will become negative and vice
 versa.
@@ -72,7 +72,7 @@ versa.
 \code{fixed.directional=TRUE} is most appropriate for comparisons between a
 control and treatment population in a controlled experiment. In this case,
 the reference matrix is treated as the baseline. This is a directional analysis,
-meaning that if the reference and test matrices were to be swapped, the
+meaning that if the reference and treatment matrices were to be swapped, the
 contributions of the vital rates would change.
 
 We set \code{fixed.directional=FALSE} as the default behavior because most
