@@ -24,20 +24,20 @@ exact LTRE methods. Life Table Response Experiments are a valuable tool for
 advancing our knowledge about how stage-specific vital rates influence population
 dynamics. The results of LTRE's also inform conservation goals, by identifying 
 the life stage and vital rate (for example, juvenile survival or adult reproductive
-success) that have the largest impact on population growth rate.
+success) that had the largest impact on population growth rate in past 
+observations or following a management intervention.
 
-The standard methods of LTRE, presented in the Caswell (2001) textbook, are based
-on approximations and are vulnerable to mistakes both due to the approximation of
-specific terms and the fact that higher-order terms are neglected from the analyses.
-Exact LTRE avoids errors of interpretation by directly calculating the impact on
-population growth rate of differences or variation in vital rates. With the 
-improved computing power that we have today, we no longer need to rely on 
-approximation methods that can be faulty. 
+The classical methods of LTRE, presented in the Caswell (2001) textbook, use 
+Taylor expansion approximations to calculate the contributions of vital rates. 
+These classical methods also do not include many interactions terms which may 
+be important. Exact LTRE provides an exact calculation of each contribution 
+term, including interactions terms, by directly calculating the impact on 
+population growth rate of differences or variation in vital rates.
 
-This package includes functions for the approximate methods as well as the exact
-methods that we introduce. This will allow researchers to use both the methods
-that are standard in the literature up until now (2021), and the new methods that
-we encourage as a new standard.
+This package includes functions for the classical methods as well as the 
+fANOVA-based exact methods that we introduce. This will allow researchers to use
+both the methods that are standard in the literature up until now (2021), and 
+the new methods that we encourage as a new standard.
 
 ## Installation
 

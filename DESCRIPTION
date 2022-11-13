@@ -1,10 +1,10 @@
 Package: exactLTRE
 Title: An Exact Method for Life Table Response Experiment (LTRE) Analysis
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
     person("Christina", "Hernandez", , "cmh352@cornell.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7188-8217"))
-Description: This package includes functions for the standard (approximate) LTRE methods and an exact version of LTRE.
+Description: This package includes functions for the classical (approximate) LTRE methods and an exact version of LTRE.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
