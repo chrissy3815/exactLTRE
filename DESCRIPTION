@@ -4,7 +4,7 @@ Version: 0.1.0
 Authors@R: 
     person("Christina", "Hernandez", , "cmh352@cornell.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7188-8217"))
-Description: This package includes functions for the classical (approximate) LTRE methods and an exact version of LTRE.
+Description: Life Table Response Experiments (LTREs) are a method of comparative demographic analysis. The purpose is to quantify how the difference or variance in vital rates (stage-specific survival, growth, and fertility) amongst populations contributes to difference or variance in the population growth rate, "lambda." We provide functions for one-way fixed design and random design LTRE, using either the classical methods that have been in use for several decades, or an fANOVA-based exact method that directly calculates the impact on lambda of changes in matrix elements, for matrix elements and their interactions. The equations and descriptions for the classical methods of LTRE analysis can be found in Caswell's 2001 textbook, and the fANOVA-based exact methods will be published in a forthcoming paper.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

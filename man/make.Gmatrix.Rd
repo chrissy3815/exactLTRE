@@ -17,7 +17,7 @@ The G-matrix is the operator used for calculating a vector of effects from a
 vector of responses, up to arbitrary interaction order. This recursive function
 for building up the G-matrix is presented in a paper about genetic epistasis
 from Poelwijk, Krishna, and Ranganathan (2016, PLOS Comp Bio
-\href{https://doi.org/10.1371/journal.pcbi.1004771}{doi}). When the G-matrix is
+\doi{10.1371/journal.pcbi.1004771}). When the G-matrix is
 multiplied on the right by a column vector of the observed responses, it will
 produce a column vector of the effects. In other words, the G-matrix adds and
 subtracts off the appropriate lower-order terms to arrive at the correct values

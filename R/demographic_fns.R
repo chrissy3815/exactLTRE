@@ -4,7 +4,7 @@
 #'
 #' Generation time has been defined in multiple ways. This calculation comes
 #' from Bienvenu and Legendre (2015, The American Naturalist;
-#' [doi](https://doi.org/10.1086/681104)). They define the generation time as
+#' \doi{10.1086/681104}). They define the generation time as
 #' the average time between two events in the genealogy of the population.
 #'
 #' @param Amat The full population projection matrix
