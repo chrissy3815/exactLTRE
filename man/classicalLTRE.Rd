@@ -27,7 +27,7 @@ rate, defined as the largest eigenvalue of the population projection matrix.
 \description{
 Life Table Response Experiments (LTREs) are a method of comparative demographic
 analysis. The purpose is to quantify how the difference or variance in vital
-rates (stage-specific survival, growth, and fertility) amongst populations
+rates (stage-specific survival, growth, and fertility) among populations
 contributes to difference or variance in the population growth rate, "lambda."
 The equations and descriptions for the classical methods of LTRE analysis
 can be found in Caswell's 2001 textbook. The function we provide here can
@@ -47,7 +47,7 @@ A random design LTRE decomposes the variance in lambda due to variance and
 covariance in the entries at each position in the matrices. It assumes that
 the matrices being analyzed come from a population of similar matrices,
 without the particular treatment levels or population conditions being of
-interest per se. For a random design LTRE, at least 2 matrices must be
+interest in themselves. For a random design LTRE, at least 2 matrices must be
 provided. The matrix of contributions returned from a classical method
 random design LTRE will include both first-order terms (due to variance) and
 interaction terms (due to covariance). Therefore, if the provided matrix is

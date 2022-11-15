@@ -21,7 +21,7 @@ population projection matrix.
 \description{
 Life Table Response Experiments (LTREs) are a method of comparative demographic
 analysis. The purpose is to quantify how the difference or variance in vital
-rates (stage-specific survival, growth, and fertility) amongst populations '
+rates (stage-specific survival, growth, and fertility) among populations '
 contributes to the difference or variance in the population growth rate,
 "lambda." ' The equations and descriptions for the classical methods of LTRE
 analysis ' can be found in Caswell's 2001 textbook.
@@ -48,5 +48,5 @@ can be found in Caswell's 2001 textbook.
 \examples{
 A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
 A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
-cont_diff<- classicalLTRE(list(A1,A2), method='fixed') # contributions to the difference in lambda
+cont_diff<- classicalLTRE_fixed(A1, A2) # contributions to the difference in lambda
 }

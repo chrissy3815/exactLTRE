@@ -75,8 +75,8 @@ cov_matrix<- function(Aobj){
 #' assumes that the matrix is square (as population projection matrices are).
 #' This function also assumes that the matrix was originally collapsed column-wise.
 #'
-#' @param vecM Either a single row containing a vector-ized matrix, or a matrix
-#' where each row is a column-wise vector-ized matrix.
+#' @param vecM Either a single row containing a vectorized matrix, or a matrix
+#' where each row is a column-wise vectorized matrix.
 #' @param j Row-index of the target matrix to re-construct, if \code{vecM} is a
 #' matrix. If \code{vecM} is a single row vector, then this input can be
 #' neglected.

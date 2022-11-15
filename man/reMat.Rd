@@ -7,8 +7,8 @@
 reMat(vecM, j = NULL)
 }
 \arguments{
-\item{vecM}{Either a single row containing a vector-ized matrix, or a matrix
-where each row is a column-wise vector-ized matrix.}
+\item{vecM}{Either a single row containing a vectorized matrix, or a matrix
+where each row is a column-wise vectorized matrix.}
 
 \item{j}{Row-index of the target matrix to re-construct, if \code{vecM} is a
 matrix. If \code{vecM} is a single row vector, then this input can be

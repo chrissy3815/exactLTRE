@@ -57,7 +57,7 @@ set of matrices.
 \description{
 Life Table Response Experiments (LTREs) are a method of comparative demographic
 analysis. The purpose is to quantify how the difference or variance in vital
-rates (stage-specific survival, growth, and fertility) amongst populations
+rates (stage-specific survival, growth, and fertility) among populations
 contributes to difference or variance in the population growth rate, "lambda."
 The exact method of LTRE is based on the principles of functional ANOVA.
 The equations and descriptions for the exact method will be published in a

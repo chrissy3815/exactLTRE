@@ -11,7 +11,7 @@
 The goal of exactLTRE is to provide a set of friendly tools to increase
 use of exact LTRE methods. Life Table Response Experiments are a
 valuable tool for advancing our knowledge about how stage-specific vital
-rates influence population dynamics. The results of LTRE’s also inform
+rates influence population dynamics. The results of LTREs also inform
 conservation goals, by identifying the life stage and vital rate (for
 example, juvenile survival or adult reproductive success) that had the
 largest impact on population growth rate in past observations or

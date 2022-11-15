@@ -19,7 +19,7 @@ A matrix of contributions to variance in lambda.
 \description{
 Life Table Response Experiments (LTREs) are a method of comparative demographic
 analysis. The purpose is to quantify how the difference or variance in vital
-rates (stage-specific survival, growth, and fertility) amongst populations
+rates (stage-specific survival, growth, and fertility) among populations
 contributes to the difference or variance in the population growth rate, "lambda."
 The equations and descriptions for the classical methods of LTRE analysis
 can be found in Caswell's 2001 textbook.
