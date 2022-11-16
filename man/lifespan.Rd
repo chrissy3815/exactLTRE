@@ -4,7 +4,7 @@
 \alias{lifespan}
 \title{Expected lifespan}
 \usage{
-lifespan(Umat, all_ages = T)
+lifespan(Umat, all_ages = TRUE)
 }
 \arguments{
 \item{Umat}{The survival components of the population projection matrix}

@@ -61,7 +61,7 @@ generation_time<- function(Amat, Fmat){
 r_nought<- function(Amat, Fmat){
   Umat<- Amat-Fmat
   Nmat<- fundamental_matrix(Umat)
-  R0<- max(Re(eigen(Fmat%*%Nmat, only.values = T)$values))
+  R0<- max(Re(eigen(Fmat%*%Nmat, only.values = TRUE)$values))
   return(R0)
 }
 
@@ -100,14 +100,14 @@ r_nought<- function(Amat, Fmat){
 #' # survival matrix, contains all the transitions *except* for fertility.
 #' eta<- lifespan(U1, all_ages=TRUE)
 #' eta_1<- lifespan(U1, all_ages=FALSE) # eta_1 should match the first entry of eta
-lifespan<- function(Umat, all_ages=T){
+lifespan<- function(Umat, all_ages=TRUE){
   # expected lifespan (in timesteps of the model, not years!) is t(e)*Nmat
-  # if all.ages=T, then return the vector of expected lifespan remaining
-  # if all.ages=F, then return only the first entry (expected lifespan at the beginning of life)
+  # if all.ages=TRUE, then return the vector of expected lifespan remaining
+  # if all.ages=FALSE, then return only the first entry (expected lifespan at the beginning of life)
   Nmat<- fundamental_matrix(Umat)
   eT<- t(rep(1, dim(Umat)[1])) # column of ones
   eta<- eT%*%Nmat
-  if (all_ages==F){
+  if (all_ages==FALSE){
     eta<- eta[1]
   }
   return(eta)

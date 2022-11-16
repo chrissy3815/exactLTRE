@@ -10,9 +10,9 @@ library(devtools)
 library(Rcompadre)
 
 # Install exactLTRE from github:
-devtools::install_github("chrissy3815/exactLTRE", force=TRUE)
+# devtools::install_github("chrissy3815/exactLTRE", force=TRUE)
 # if that doesn't work, try:
-devtools::install_github("chrissy3815/exactLTRE", ref="main", force=TRUE)
+# devtools::install_github("chrissy3815/exactLTRE", ref="main", force=TRUE)
 # If that still doesn't work, you can clone the repository from Github and
 # install directly (see here: https://kbroman.org/pkg_primer/pages/build.html)
 
@@ -29,28 +29,28 @@ A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
 # Approximate LTRE:
 # contributions to the difference in lambda
 cont_diff<- approximateLTRE(list(A1,A2), method='fixed')
-cont_diff; # matrix of contributions 
-sum(cont_diff); # sum of approximate contributions 
-lamDiff(list(A1,A2)); # true difference in lambda 
+cont_diff; # matrix of contributions
+sum(cont_diff); # sum of approximate contributions
+lamDiff(list(A1,A2)); # true difference in lambda
 
 # contributions to the variance of lambda
 cont_var<- approximateLTRE(list(A1,A2,A3), method='random')
-round(cont_var,digits=5); # matrix of contributions 
-sum(cont_var); # sum of contributions 
-lamVar(list(A1,A2,A3)); # true variance in lambda 
+round(cont_var,digits=5); # matrix of contributions
+sum(cont_var); # sum of contributions
+lamVar(list(A1,A2,A3)); # true variance in lambda
 
 # Exact LTRE:
 # contributions to the difference in lambda
 cont_diff<- exactLTRE(list(A1,A2), method='fixed')
 cbind(as.character(cont_diff$varying.indices.list),round(cont_diff$epsilons,digits=5))
-sum(cont_diff$epsilons); # sum of contributions 
-lamDiff(list(A1,A2)); # true difference in lambda 
+sum(cont_diff$epsilons); # sum of contributions
+lamDiff(list(A1,A2)); # true difference in lambda
 
 # contributions to the variance of lambda
 cont_var<- exactLTRE(list(A1,A2,A3), method='random')
-cbind(as.character(cont_var$varying.indices.list),round(cont_var$epsilons,digits=5)); 
-sum(cont_var$epsilons); # sum of contributions 
-lamVar(list(A1,A2,A3)); # true variance in lambda 
+cbind(as.character(cont_var$varying.indices.list),round(cont_var$epsilons,digits=5));
+sum(cont_var$epsilons); # sum of contributions
+lamVar(list(A1,A2,A3)); # true variance in lambda
 
 # Generation Time:
 F1<- matrix(0, nrow=3, ncol=3)
@@ -77,10 +77,10 @@ eta_1<- lifespan(U1, all_ages=FALSE) # eta_1 should match the first entry of eta
 comadre<- cdb_fetch("comadre")
 compadre<- cdb_fetch("compadre")
 
-## Note: if you can't install Rcompadre because of OS incompatibility, then 
-# uncomment this line, make sure the file path is correct, and run it to load 
+## Note: if you can't install Rcompadre because of OS incompatibility, then
+# uncomment this line, make sure the file path is correct, and run it to load
 # the matrices and metadata for the following few examples.
-# This file contains the following four objects: 
+# This file contains the following four objects:
 # geocrinia, geocrinia_mats, spermophilus, spermophilus_mats,
 load('example_matrices.Rdata')
 
