@@ -77,7 +77,7 @@ compadre<- cdb_fetch("compadre")
 # the matrices and metadata for the following few examples.
 # This file contains the following four objects:
 # geocrinia, geocrinia_mats, spermophilus, spermophilus_mats,
-load('example_matrices.Rdata')
+load('inst/BESworkshop/example_matrices.Rdata')
 
 # We'll first work through a simple example of fixed design LTREs with white-bellied frogs.
 geocrinia<- cdb_flatten(comadre[comadre$SpeciesAuthor=="Geocrinia_alba",])
@@ -90,17 +90,31 @@ names(geocrinia)
 # https://jonesor.github.io/CompadreGuides/user-guide.html#variables-in-metadata
 
 # Here's an example of pulling out some metadata:
-geocrinia[,c("SpeciesAccepted", "OrganismType", "Country", "MatrixPopulation", "MatrixTreatment")]
+geocrinia[,c("SpeciesAccepted", "Country", "MatrixPopulation", "MatrixTreatment", "MatrixID")]
 
 # pull out the two matrices of interest:
 geocrinia_mats<- c(matA(comadre[comadre$MatrixID==248239,]),matA(comadre[comadre$MatrixID==248238, ]))
 lapply(geocrinia_mats, eigen, only.values=TRUE)
 
+# lambda for Forest Grove South population:
+eigen(geocrinia_mats[[1]], only.values=TRUE)$values[1]
+# lambda for Bruce Road population:
+eigen(geocrinia_mats[[2]], only.values=TRUE)$values[1]
+# Forest Grove South population is growing, Bruce Rd population is shrinking.
+# difference in lambda (Bruce Road - Forest Grove South):
+eigen(geocrinia_mats[[2]], only.values=TRUE)$values[1]-eigen(geocrinia_mats[[1]], only.values=TRUE)$values[1]
+
+# How do the matrix elements differ?
+differences<- as.vector(geocrinia_mats[[2]] - geocrinia_mats[[1]])
+barplot(differences, main='Differences', names.arg=c('', 'sJ', 'f', 'sA'))
+
+# Which matrix elements are driving the difference?
 # Evaluate a fixed symmetric design LTRE:
 result<- exactLTRE(geocrinia_mats, method='fixed', fixed.directional = FALSE)
 result$varying.indices.list
-barplot(t(result$epsilons[2:length(result$epsilons)]),
-        names.arg=c("sJ", "f","sJ, f", "sA", "sJ, sA", "f, sA", "sJ, f, sA"), las=2)
+barplot(t(result$epsilons[2:length(result$epsilons)]), main='Contributions',
+        names.arg=c("sJ", "f","sJ, f", "sA", "sJ, sA", "f, sA", "sJ, f, sA"),
+        las=2)
 
 #################################################################
 ## Ground squirrel example:
@@ -110,15 +124,40 @@ barplot(t(result$epsilons[2:length(result$epsilons)]),
 spermophilus<- cdb_flatten(comadre[comadre$MatrixID %in% c(249840,249844),])
 # cdb_flatten extracts the metadata only.
 
-# Should we do a symmetric or directional LTRE?
-spermophilus[,c("MatrixID", "MatrixPopulation", "MatrixTreatment")]
-
 # pull out the matrices:
 spermophilus_mats<- c(matA(comadre[comadre$MatrixID==249840]), matA(comadre[comadre$MatrixID==249844]))
 
-# Maybe try running it both ways, and see how the interpretation changes.
-spermophilus_symm<- exactLTRE(spermophilus_mats, method='fixed', maxint=3, fixed.directional = FALSE)
+# lambda for unmanipulated population:
+eigen(spermophilus_mats[[1]], only.values=TRUE)$values[1]
+# lambda for density reduction population:
+eigen(spermophilus_mats[[2]], only.values=TRUE)$values[1]
+# These populations have very similar population growth rates!
+# difference in lambda (treatment - reference):
+eigen(spermophilus_mats[[2]], only.values=TRUE)$values[1]-eigen(spermophilus_mats[[1]], only.values=TRUE)$values[1]
+
+# How do the matrix elements differ?
+differences<- as.vector(spermophilus_mats[[2]] - spermophilus_mats[[1]])
+differences<- differences[abs(differences)>0]
+barplot(differences, main='Differences', names.arg=c("F1", "P1", "F2", "P2", "F3", "P3"))
+
+# Should we do a symmetric or directional LTRE?
+spermophilus[,c("MatrixID", "MatrixPopulation", "MatrixTreatment")]
+
+# We want to compare a treatment with a control, so this should be DIRECTIONAL
 spermophilus_dir<- exactLTRE(spermophilus_mats, method='fixed', maxint=3, fixed.directional = TRUE)
+xlabels<- c("F1", "P1", "F2", "P2", "F3", "P3",
+            "F1+P1", "F1+F2", "F1+P2", "F1+F3", "F1+P3", "P1+F2", "P1+P2",
+            "P1+F3", "P1+P3", "F2+P2", "F2+F3", "F2+P3", "P2+F3", "P2+P3",
+            "F3+P3", "F1+P1+F2", "F1+P1+P2", "F1+P1+F3", "F1+P1+P3",
+            "F1+F2+P2", "F1+F2+F3", "F1+F2+P3", "F1+P2+F3", "F1+P2+P3",
+            "F1+F3+P3", "P1+F2+P2", "P1+F2+F3", "P1+F2+P3", "P1+P2+F3",
+            "P1+P2+P3", "P1+F3+P3", "F2+P2+F3", "F2+P2+P3", "F2+F3+P3", "P2+F3+P3")
+barplot(spermophilus_dir$epsilons[-1], beside = TRUE, names.arg = xlabels, las=2,
+        legend=c("Symmetric", "Directional"), args.legend = list(x="topright"),)
+
+
+# Let's also see how the interpretation changes when we switch between symmetric and directional.
+spermophilus_symm<- exactLTRE(spermophilus_mats, method='fixed', maxint=3, fixed.directional = FALSE)
 
 # plot the comparison:
 toplot<- rbind(spermophilus_symm$epsilons, spermophilus_dir$epsilons)
