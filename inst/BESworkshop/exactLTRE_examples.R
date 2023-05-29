@@ -131,7 +131,7 @@ spermophilus_mats<- c(matA(comadre[comadre$MatrixID==249840]), matA(comadre[coma
 eigen(spermophilus_mats[[1]], only.values=TRUE)$values[1]
 # lambda for density reduction population:
 eigen(spermophilus_mats[[2]], only.values=TRUE)$values[1]
-# These populations have very similar population growth rates!
+# These populations had very similar population growth rates!
 # difference in lambda (treatment - reference):
 eigen(spermophilus_mats[[2]], only.values=TRUE)$values[1]-eigen(spermophilus_mats[[1]], only.values=TRUE)$values[1]
 
@@ -152,9 +152,7 @@ xlabels<- c("F1", "P1", "F2", "P2", "F3", "P3",
             "F1+F2+P2", "F1+F2+F3", "F1+F2+P3", "F1+P2+F3", "F1+P2+P3",
             "F1+F3+P3", "P1+F2+P2", "P1+F2+F3", "P1+F2+P3", "P1+P2+F3",
             "P1+P2+P3", "P1+F3+P3", "F2+P2+F3", "F2+P2+P3", "F2+F3+P3", "P2+F3+P3")
-barplot(spermophilus_dir$epsilons[-1], beside = TRUE, names.arg = xlabels, las=2,
-        legend=c("Symmetric", "Directional"), args.legend = list(x="topright"),)
-
+barplot(spermophilus_dir$epsilons[-1], beside = TRUE, names.arg = xlabels, las=2)
 
 # Let's also see how the interpretation changes when we switch between symmetric and directional.
 spermophilus_symm<- exactLTRE(spermophilus_mats, method='fixed', maxint=3, fixed.directional = FALSE)
@@ -176,7 +174,47 @@ barplot(toplot, beside = TRUE, names.arg = xlabels, las=2,
 ## Random design LTRE example
 #################################################################
 
-# In your breakout groups, pick another species to analyse with a random LTRE.
+## Alliaria petiolata, garlic mustard
+alliaria<- cdb_flatten(compadre[compadre$MatrixID %in% c(241484,241485, 241486),])
+# Note: cdb_flatten extracts the metadata only.
+alliaria[,c("MatrixID", "MatrixPopulation", "MatrixStartYear", "MatrixEndYear")]
+# We are going to look at the variance in lambda across 3 years at the 'Ives Road' population
 
+# pull out the matrices:
+alliaria_mats<- matA(compadre[compadre$MatrixID %in% c(241484,241485, 241486)])
+# Note: for random design, order does not matter.
 
+# lambda for first year:
+eigen(alliaria_mats[[1]], only.values=TRUE)$values[1]
+# lambda for second year:
+eigen(alliaria_mats[[2]], only.values=TRUE)$values[1]
+# lambda for third year:
+Re(eigen(alliaria_mats[[3]], only.values=TRUE)$values[1])
+# These years had very similar population growth rates!
+# variance in lambda
+lamVar(alliaria_mats)
+
+# How do the matrix elements vary?
+elems<- vector()
+elems<- sapply(alliaria_mats, function(x){cbind(elems, as.vector(x))})
+variances<- apply(elems, MARGIN = 1, variance_complete)
+variances<- variances[variances>0]
+# Plot the variances:
+barplot(variances, main='Variances', names.arg=c("Ps", "Gr", "Gf", "Fs", "Fr"))
+
+# Run the exact LTRE:
+alliaria_exact<- exactLTRE(alliaria_mats, method='random', maxint = 3)
+# Note: that warning is coming up because reproductive individuals can produce two types of offspring!
+matF(compadre[compadre$MatrixID==241484])
+
+# Look at some of the results:
+alliaria_exact$indices.varying
+alliaria_exact$varying.indices.list
+
+# Plot the results of the exact LTRE
+xlabels<- c("Ps", "Gr", "Gf", "Fs", "Fr", "Ps+Gr", "Ps+Gf", "Ps+Fs", "Ps+Fr",
+            "Gr+Gf", "Gr+Fs", "Gr+Fr", "Gf+Fs", "Gf+Fr", "Fs+Fr", "Ps+Gr+Gf",
+            "Ps+Gr+Fs", "Ps+Gr+Fr", "Ps+Gf+Fs", "Ps+Gf+Fr", "Ps+Fs+Fr",
+            "Gr+Gf+Fs", "Gr+Gf+Fr", "Gr+Fs+Fr", "Gf+Fs+Fr")
+barplot(alliaria_exact$epsilons[-1], beside = TRUE, names.arg = xlabels, las=2)
 
