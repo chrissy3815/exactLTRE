@@ -21,7 +21,7 @@ A1<- matrix(data=c(0,0.8,0, 0,0,0.7, 5,0,0.2), nrow=3, ncol=3)
 A2<- matrix(data=c(0,0.9,0, 0,0,0.5, 4,0,0.3), nrow=3, ncol=3)
 A3<- matrix(data=c(0,0.4,0, 0,0,0.6, 6,0,0.25), nrow=3, ncol=3)
 
-# Approximate LTRE:
+# Classical LTRE:
 # contributions to the difference in lambda
 cont_diff<- classicalLTRE(list(A1,A2), method='fixed')
 cont_diff; # matrix of contributions
@@ -94,7 +94,6 @@ geocrinia[,c("SpeciesAccepted", "Country", "MatrixPopulation", "MatrixTreatment"
 
 # pull out the two matrices of interest:
 geocrinia_mats<- c(matA(comadre[comadre$MatrixID==248239,]),matA(comadre[comadre$MatrixID==248238, ]))
-lapply(geocrinia_mats, eigen, only.values=TRUE)
 
 # lambda for Forest Grove South population:
 eigen(geocrinia_mats[[1]], only.values=TRUE)$values[1]
@@ -111,7 +110,6 @@ barplot(differences, main='Differences', names.arg=c('', 'sJ', 'f', 'sA'))
 # Which matrix elements are driving the difference?
 # Evaluate a fixed symmetric design LTRE:
 result<- exactLTRE(geocrinia_mats, method='fixed', fixed.directional = FALSE)
-result$varying.indices.list
 barplot(t(result$epsilons[2:length(result$epsilons)]), main='Contributions',
         names.arg=c("sJ", "f","sJ, f", "sA", "sJ, sA", "f, sA", "sJ, f, sA"),
         las=2)
@@ -132,7 +130,7 @@ eigen(spermophilus_mats[[1]], only.values=TRUE)$values[1]
 # lambda for density reduction population:
 eigen(spermophilus_mats[[2]], only.values=TRUE)$values[1]
 # These populations had very similar population growth rates!
-# difference in lambda (treatment - reference):
+# difference in lambda (treatment - control):
 eigen(spermophilus_mats[[2]], only.values=TRUE)$values[1]-eigen(spermophilus_mats[[1]], only.values=TRUE)$values[1]
 
 # How do the matrix elements differ?
@@ -153,6 +151,12 @@ xlabels<- c("F1", "P1", "F2", "P2", "F3", "P3",
             "F1+F3+P3", "P1+F2+P2", "P1+F2+F3", "P1+F2+P3", "P1+P2+F3",
             "P1+P2+P3", "P1+F3+P3", "F2+P2+F3", "F2+P2+P3", "F2+F3+P3", "P2+F3+P3")
 barplot(spermophilus_dir$epsilons[-1], beside = TRUE, names.arg = xlabels, las=2)
+
+# Check that contributions are within ~5% of true variance in lambda:
+sum(spermophilus_dir$epsilons)
+lamDiff(spermophilus_mats)
+abs(lamDiff(spermophilus_mats)-sum(spermophilus_dir$epsilons))/lamDiff(spermophilus_mats)
+# up to maxint=3 not sufficient!
 
 # Let's also see how the interpretation changes when we switch between symmetric and directional.
 spermophilus_symm<- exactLTRE(spermophilus_mats, method='fixed', maxint=3, fixed.directional = FALSE)
@@ -207,10 +211,6 @@ alliaria_exact<- exactLTRE(alliaria_mats, method='random', maxint = 3)
 # Note: that warning is coming up because reproductive individuals can produce two types of offspring!
 matF(compadre[compadre$MatrixID==241484])
 
-# Look at some of the results:
-alliaria_exact$indices.varying
-alliaria_exact$varying.indices.list
-
 # Plot the results of the exact LTRE
 xlabels<- c("Ps", "Gr", "Gf", "Fs", "Fr", "Ps+Gr", "Ps+Gf", "Ps+Fs", "Ps+Fr",
             "Gr+Gf", "Gr+Fs", "Gr+Fr", "Gf+Fs", "Gf+Fr", "Fs+Fr", "Ps+Gr+Gf",
@@ -218,3 +218,8 @@ xlabels<- c("Ps", "Gr", "Gf", "Fs", "Fr", "Ps+Gr", "Ps+Gf", "Ps+Fs", "Ps+Fr",
             "Gr+Gf+Fs", "Gr+Gf+Fr", "Gr+Fs+Fr", "Gf+Fs+Fr")
 barplot(alliaria_exact$epsilons[-1], beside = TRUE, names.arg = xlabels, las=2)
 
+# Check that contributions are within ~5% of true variance in lambda:
+sum(alliaria_exact$epsilons)
+lamVar(alliaria_mats)
+abs(lamVar(alliaria_mats)-sum(alliaria_exact$epsilons))/lamVar(alliaria_mats)
+# up to maxint=3 not sufficient!
