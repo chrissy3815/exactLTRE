@@ -207,7 +207,7 @@ variances<- variances[variances>0]
 barplot(variances, main='Variances', names.arg=c("Ps", "Gr", "Gf", "Fs", "Fr"))
 
 # Run the exact LTRE:
-alliaria_exact<- exactLTRE(alliaria_mats, method='random', maxint = 3)
+alliaria_exact<- exactLTRE(alliaria_mats, method='random', maxint = 'all')
 # Note: that warning is coming up because reproductive individuals can produce two types of offspring!
 matF(compadre[compadre$MatrixID==241484])
 
@@ -223,3 +223,16 @@ sum(alliaria_exact$epsilons)
 lamVar(alliaria_mats)
 abs(lamVar(alliaria_mats)-sum(alliaria_exact$epsilons))/lamVar(alliaria_mats)
 # up to maxint=3 not sufficient!
+
+# We need to do maxint='all' for this one:
+alliaria_exact_all<- exactLTRE(alliaria_mats, method='random', maxint = 'all')
+# re-order to make it easier to read the barplot:
+contrib_order<- order(sapply(alliaria_exact_all$varying.indices.list, FUN=length))[-1]
+xlabels<- c("Ps", "Gr", "Gf", "Fs", "Fr", "Ps+Gr", "Ps+Gf", "Gr+Gf", "Ps+Fs",
+            "Gr+Fs", "Gf+Fs", "Ps+Fr", "Gr+Fr", "Gf+Fr", "Fs+Fr", "Ps+Gr+Gf",
+            "Ps+Gr+Fs", "Ps+Gf+Fs", "Gr+Gf+Fs", "Ps+Gr+Fr", "Ps+Gf+Fr",
+            "Gr+Gf+Fr", "Ps+Fs+Fr", "Gr+Fs+Fr", "Gf+Fs+Fr", "Ps+Gr+Gf+Fs",
+            "Ps+Gf+Gf+Fr", "Ps+Gr+Fs+Fr", "Ps+Gf+Fs+Fr", "Gr+Gf+Fs+Fr", "5-way")
+par(mar=c(7,4,4,2))
+barplot(alliaria_exact_all$epsilons[contrib_order], beside = TRUE, names.arg = xlabels, las=2)
+
