@@ -46,7 +46,7 @@ devtools::install_github("chrissy3815/exactLTRE", ref="main")
 ## Fixed Design LTRE
 
 A fixed design LTRE decomposes the difference in population growth rate
-(“lambda,” i.e. the leading eigenvalue of the population projection
+(“lambda,” i.e. the leading eigenvalue of the population projection
 matrix) into the contributions from differences in the vital rates, and
 their interactions.
 
@@ -68,7 +68,7 @@ cont_symmetric<- exactLTRE(list(A1,A2), method='fixed', fixed.directional=FALSE)
 ## Random Design LTRE
 
 A random design LTRE decomposes the variance in population growth rate
-(“lambda,” i.e. the leading eigenvalue of the population projection
+(“lambda,” i.e. the leading eigenvalue of the population projection
 matrix) into the contributions from (co)variances of the vital rates and
 their interactions.
 
