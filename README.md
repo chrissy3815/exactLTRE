@@ -6,6 +6,9 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/chrissy3815/exactLTRE/workflows/R-CMD-check/badge.svg)](https://github.com/chrissy3815/exactLTRE/actions)
+[![R-CMD-check](https://github.com/chrissy3815/exactLTRE/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/chrissy3815/exactLTRE/actions/workflows/R-CMD-check.yaml)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/exactLTRE)](https://CRAN.R-project.org/package=exactLTRE)
 <!-- badges: end -->
 
 The goal of exactLTRE is to provide a set of friendly tools to increase
@@ -46,7 +49,7 @@ devtools::install_github("chrissy3815/exactLTRE", ref="main")
 ## Fixed Design LTRE
 
 A fixed design LTRE decomposes the difference in population growth rate
-(“lambda,” i.e. the leading eigenvalue of the population projection
+(“lambda,” i.e. the leading eigenvalue of the population projection
 matrix) into the contributions from differences in the vital rates, and
 their interactions.
 
@@ -68,7 +71,7 @@ cont_symmetric<- exactLTRE(list(A1,A2), method='fixed', fixed.directional=FALSE)
 ## Random Design LTRE
 
 A random design LTRE decomposes the variance in population growth rate
-(“lambda,” i.e. the leading eigenvalue of the population projection
+(“lambda,” i.e. the leading eigenvalue of the population projection
 matrix) into the contributions from (co)variances of the vital rates and
 their interactions.
 

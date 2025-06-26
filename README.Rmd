@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/chrissy3815/exactLTRE/workflows/R-CMD-check/badge.svg)](https://github.com/chrissy3815/exactLTRE/actions)
 [![R-CMD-check](https://github.com/chrissy3815/exactLTRE/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/chrissy3815/exactLTRE/actions/workflows/R-CMD-check.yaml)
+[![CRAN status](https://www.r-pkg.org/badges/version/exactLTRE)](https://CRAN.R-project.org/package=exactLTRE)
 <!-- badges: end -->
 
 The goal of exactLTRE is to provide a set of friendly tools to increase use of 
