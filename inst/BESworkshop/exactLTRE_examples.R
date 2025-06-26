@@ -207,7 +207,7 @@ variances<- variances[variances>0]
 barplot(variances, main='Variances', names.arg=c("Ps", "Gr", "Gf", "Fs", "Fr"))
 
 # Run the exact LTRE:
-alliaria_exact<- exactLTRE(alliaria_mats, method='random', maxint = 'all')
+alliaria_exact<- exactLTRE(alliaria_mats, method='random', maxint = 3)
 # Note: that warning is coming up because reproductive individuals can produce two types of offspring!
 matF(compadre[compadre$MatrixID==241484])
 
