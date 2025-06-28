@@ -30,9 +30,9 @@ or variation in vital rates.
 
 This package includes functions for the classical methods as well as the
 fANOVA-based exact methods that we introduce. This will allow
-researchers to use both the methods that are standard in the literature
-up until now (2021), and the new methods that we encourage as a new
-standard.
+researchers to use both the methods that have been standard in the
+literature, and the new methods that we developed (Hernandez et al. 2023
+:10.1111/2041-210X.14065) and that we now encourage as a new standard.
 
 ## Installation
 
@@ -40,7 +40,7 @@ You can install from CRAN with:
 
 ``` r
 install.packages("exactLTRE")
-#> Installing package into '/private/var/folders/58/3tnmcnfd4txdsp_q3j_5npwm0000gn/T/RtmpoWaJOz/temp_libpath1b491abe0385'
+#> Installing package into '/private/var/folders/58/3tnmcnfd4txdsp_q3j_5npwm0000gn/T/RtmpoWaJOz/temp_libpath1b499fe1710'
 #> (as 'lib' is unspecified)
 #> Warning: package 'exactLTRE' is not available for this version of R
 #> 
