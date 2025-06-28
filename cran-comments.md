@@ -2,16 +2,6 @@
 
 0 errors | 0 warnings | 1 note
 
-* This is a new release.
-
-## Downstream dependencies
-There are currently no downstream dependencies.
-
-## Resubmission Notes Nov 16
-Three items were flagged for correction
-
-* All instances where 'T' or 'F' were used in place of TRUE and FALSE have been corrected.
-
-* Lines showing how to install the package from github in the inst/ESAworkshop/exactLTRE_workshop.R file have been commented out.
-
-* All citations added to Description in DESCRIPTION file, according to requested formatting.
+* This is a new release. This package was previously released on CRAN but was removed due to outdated Author contact information.
+* Code is unchanged from previous CRAN relase v 0.1.0, but Author contact info is corrected to a stable e-mail address, and the description now includes updated references.
+* The note in R CMD check is 'unable to verify current time' - this is an issue with my local computer.

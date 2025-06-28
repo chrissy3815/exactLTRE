@@ -43,6 +43,12 @@ the new methods that we encourage as a new standard.
 
 ## Installation
 
+You can install from CRAN with:
+```{r}
+install.packages("exactLTRE")
+```
+
+
 You can install the development version of exactLTRE from [GitHub](https://github.com/) with:
 
 ``` r
