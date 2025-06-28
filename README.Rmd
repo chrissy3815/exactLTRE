@@ -38,8 +38,9 @@ population growth rate of differences or variation in vital rates.
 
 This package includes functions for the classical methods as well as the 
 fANOVA-based exact methods that we introduce. This will allow researchers to use
-both the methods that are standard in the literature up until now (2021), and 
-the new methods that we encourage as a new standard.
+both the methods that have been standard in the literature, and the new methods 
+that we developed (Hernandez et al. 2023 <doi:10.1111/2041-210X.14065>) and that
+we now encourage as a new standard.
 
 ## Installation
 

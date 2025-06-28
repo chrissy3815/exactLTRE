@@ -36,6 +36,19 @@ standard.
 
 ## Installation
 
+You can install from CRAN with:
+
+``` r
+install.packages("exactLTRE")
+#> Installing package into '/private/var/folders/58/3tnmcnfd4txdsp_q3j_5npwm0000gn/T/RtmpoWaJOz/temp_libpath1b491abe0385'
+#> (as 'lib' is unspecified)
+#> Warning: package 'exactLTRE' is not available for this version of R
+#> 
+#> A version of this package for your version of R might be available elsewhere,
+#> see the ideas at
+#> https://cran.r-project.org/doc/manuals/r-patched/R-admin.html#Installing-packages
+```
+
 You can install the development version of exactLTRE from
 [GitHub](https://github.com/) with:
 
