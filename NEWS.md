@@ -1,3 +1,5 @@
+# exactLTRE 0.1.2
+
 # exactLTRE 0.1.1
 
 * Initial package release.
