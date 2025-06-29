@@ -1,3 +1,5 @@
+# exactLTRE (development version)
+
 # exactLTRE 0.1.2
 
 # exactLTRE 0.1.1

@@ -1,6 +1,6 @@
 Package: exactLTRE
 Title: An Exact Method for Life Table Response Experiment (LTRE) Analysis
-Version: 0.1.2
+Version: 0.1.2.9000
 Authors@R: 
     person("Christina", "Hernandez", , "christinahernan@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-7188-8217"))
